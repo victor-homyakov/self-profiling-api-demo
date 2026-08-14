@@ -1,0 +1,56 @@
+{
+    "name": "self-profiling-api-demo",
+    "version": "1.0.0",
+    "description": "Demo app",
+    "keywords": [
+        "Self-profiling",
+        "API",
+        "performance",
+        "Chrome",
+        "V8"
+    ],
+    "homepage": "https://github.com/victor-homyakov/self-profiling-api-demo#readme",
+    "bugs": {
+        "url": "https://github.com/victor-homyakov/self-profiling-api-demo/issues"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/victor-homyakov/self-profiling-api-demo.git"
+    },
+    "license": "ISC",
+    "author": "Victor Homyakov",
+    "type": "module",
+    "scripts": {
+        "dev": "vite",
+        "build": "vite build",
+        "build:profiling": "vite build --mode profiling",
+        "preview": "npm run build && vite preview",
+        "preview:profiling": "npm run build:profiling && vite preview --mode profiling",
+        "lint": "eslint . && prettier --check .",
+        "lint:fix": "eslint . --fix && prettier --write .",
+        "test": "jest"
+    },
+    "dependencies": {
+        "react": "^19.0.0",
+        "react-dom": "^19.0.0",
+        "react-router-dom": "^7.0.0"
+    },
+    "devDependencies": {
+        "@types/jest": "^30.0.0",
+        "@types/node": "^24.0.0",
+        "@types/react": "^19.0.0",
+        "@types/react-dom": "^19.0.0",
+        "@typescript-eslint/eslint-plugin": "^8.55.0",
+        "@typescript-eslint/parser": "^8.55.0",
+        "@vitejs/plugin-react": "^4.3.4",
+        "eslint": "^9.39.2",
+        "eslint-config-prettier": "^10.1.8",
+        "eslint-plugin-react": "^7.37.5",
+        "eslint-plugin-react-hooks": "^7.0.1",
+        "jest": "^30.0.0",
+        "prettier": "^3.9.6",
+        "ts-jest": "^29.4.12",
+        "typescript": "~5.6.2",
+        "vite": "^6.0.3"
+    }
+}
