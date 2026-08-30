@@ -4,7 +4,16 @@
         "lib": ["ES2023"],
         "module": "ESNext",
         "skipLibCheck": true,
-        "moduleResolution": "bundler"
+        "moduleResolution": "bundler",
+        "allowImportingTsExtensions": true,
+        "isolatedModules": true,
+        "moduleDetection": "force",
+        "noEmit": true,
+        "strict": true,
+        "noUnusedLocals": true,
+        "noUnusedParameters": true,
+        "noFallthroughCasesInSwitch": true,
+        "types": ["node"]
     },
-    "include": ["vite.config.ts"]
+    "include": ["vite.config.ts", "vite-plugin-demo-server.ts"]
 }

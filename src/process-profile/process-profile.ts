@@ -1,75 +1,84 @@
 import fs from "node:fs";
 import path from "node:path";
-import readline from "node:readline";
 
 import {decompressObject} from "../profiler/codec";
 import type {IProfileData} from "../profiler/profiler";
 
 import {convertProfile} from "./converter";
+import {generateFlamegraphs} from "./flamegraph";
 import {findAllResources, mergeProfiles} from "./merger";
 import {foldProfiles, writeFoldedProfiles} from "./stack-collapse";
 import {applySourceMappingToProfile, loadSourceMaps} from "./source-mapping";
 
-async function processFile(fileName: string): Promise<IProfileData[]> {
-    const fileExists = fs.existsSync(fileName);
+interface IProfileDataWithBaseName extends IProfileData {
+    baseName: string;
+}
 
-    if (!fileExists) {
-        console.error(`File ${fileName} does not exist`);
+function isProfilePayloadFile(name: string): boolean {
+    return name.endsWith(".txt") && !name.includes("-folded-") && !name.endsWith("-resources.txt");
+}
+
+async function loadProfilesFromPath(inputPath: string): Promise<IProfileDataWithBaseName[]> {
+    const resolved = path.resolve(inputPath);
+    if (!fs.existsSync(resolved)) {
+        console.error(`Path ${resolved} does not exist`);
         process.exit(1);
     }
 
-    console.info("Reading file", fileName);
+    const stat = fs.statSync(resolved);
+    const files = stat.isDirectory()
+        ? fs
+              .readdirSync(resolved)
+              .filter(isProfilePayloadFile)
+              .map((name) => path.join(resolved, name))
+              .sort()
+        : [resolved];
 
-    const fileStream = fs.createReadStream(fileName);
-    const reader = readline.createInterface({
-        input: fileStream,
-        crlfDelay: Infinity,
-    });
-    let firstLine = true;
+    if (!files.length) {
+        console.error(`No Profile payload .txt files in ${resolved}`);
+        process.exit(1);
+    }
 
-    const closePromise = new Promise<void>((resolve) => {
-        reader.on("close", () => {
-            resolve();
-        });
-    });
+    console.info("Reading", files.length, "payload file(s) from", resolved);
+    const profiles: IProfileDataWithBaseName[] = [];
+    for (const filePath of files) {
+        const base64 = fs.readFileSync(filePath, "utf8").trim();
+        const profile = await decompressObject<IProfileData>(base64);
+        (profile as IProfileDataWithBaseName).baseName = path.basename(filePath, path.extname(filePath));
+        profiles.push(profile as IProfileDataWithBaseName);
+    }
 
-    const promises: Promise<IProfileData>[] = [];
-
-    reader.on("line", (line) => {
-        if (firstLine) {
-            // В первой строке находится заголовок
-            firstLine = false;
-        } else {
-            promises.push(processLine(line));
-        }
-    });
-
-    await closePromise;
-
-    return await Promise.all(promises);
+    return profiles;
 }
 
-async function processLine(line: string): Promise<IProfileData> {
-    const [base64] = line.split("\t");
-
-    return decompressObject<IProfileData>(base64);
-}
-
+/**
+ * Очистка и унификация ресурса:
+ * - удаление get-параметров
+ * - унификация скриптов, задеплоенных на разные домены, в один
+ * - унификация и анонимизация путей `/resource/:id`
+ */
 function cleanupResource(resource: string): string {
-    // удаляем параметры из URL ресурсов
-    resource = resource.split("?")[0];
-    // унифицируем URL доменов
+    resource = resource.split("?")[0]!;
+    /*
+    // Примеры того, что можно и нужно унифицировать:
+    // Ресурсы с доменов `mc.yandex.*` объединяем в один: это одни и те же скрипты для разных локаций клиентов
     resource = resource.replace(/mc\.yandex\.[\w.]+\/metrika/, "mc.yandex.xx/metrika");
+    // Объединяем домены, если их несколько
     resource = resource.replace(/(?:alias1|alias2)\.com\//, "main-domain.com/");
     resource = resource.replace(/\bmain-domain\.(\w\w|com|com\.tr)\//, "main-domain.com/");
-    // унифицируем id ресурсов
+    // Объединяем инлайн-скрипты с однотипных страниц /article/id1.html и /article/id2.html
     resource = resource.replace(/\/article\/\d+$/, "/article/12345");
-    resource = resource.replace(/\/user\/\d+$/, "/user/12345");
-
+    */
     return resource;
 }
 
-function cleanupProfiles(profiles: IProfileData[]): IProfileData[] {
+/**
+ * Очистка профилей:
+ * - удаление пустых профилей (без сэмплов)
+ * - очистка и дедупликация ресурсов
+ * - сортировка по "насыщенности": первыми идут профили с максимальным соотношением сэмплов к событиям
+ */
+function cleanupProfiles<T extends IProfileData>(profiles: T[]): T[] {
     // исключаем профили без сэмплов
     profiles = profiles.filter((profile) => profile.trace.samples.length > 0);
 
@@ -82,9 +91,7 @@ function cleanupProfiles(profiles: IProfileData[]): IProfileData[] {
             }
 
             const cleanedResource = cleanupResource(resource);
-
             resourceCache.set(resource, cleanedResource);
-
             return cleanedResource;
         });
     }
@@ -94,15 +101,28 @@ function cleanupProfiles(profiles: IProfileData[]): IProfileData[] {
     );
 }
 
-async function run() {
-    const command = process.argv[3];
-    const fileName = process.argv[4];
+function outputDirFor(inputPath: string): string {
+    const resolved = path.resolve(inputPath);
+    return fs.statSync(resolved).isDirectory() ? resolved : path.dirname(resolved);
+}
 
-    console.info("Command:", command, "File name:", fileName);
+async function run(): Promise<void> {
+    const command = process.argv[2];
+    const inputPath = process.argv[3] ?? "profiles";
 
-    const parsed = path.parse(fileName);
-    let profiles = await processFile(fileName);
+    if (!command) {
+        console.error(
+            "Usage: npm run process-profile -- <traces|fold|download-maps|resources|merge|top> [profiles-dir]",
+        );
+        process.exit(1);
+    }
 
+    console.info("Command:", command, "Input:", inputPath);
+
+    const outDir = outputDirFor(inputPath);
+    const sourceMapsDir = path.join(outDir, "source-maps");
+
+    let profiles = await loadProfilesFromPath(inputPath);
     profiles = cleanupProfiles(profiles);
 
     if (!profiles.length) {
@@ -116,19 +136,21 @@ async function run() {
 
     switch (command) {
         case "top": {
-            await loadSourceMaps(resources, path.join(parsed.dir, "source-maps"));
+            await loadSourceMaps(resources, sourceMapsDir);
             const TOP = 5;
+            const topProfiles = profiles.slice(0, TOP);
+            // Free memory
+            profiles.length = 0;
+            console.info(`Writing top ${topProfiles.length} profiles to ${outDir}`);
 
-            console.info("Writing top", TOP, "profiles to", parsed.dir);
+            for (let i = 0; i < topProfiles.length; i++) {
+                const name = `top-${i}`;
+                const profile = applySourceMappingToProfile(topProfiles[i]!);
+                const folded = foldProfiles([profile]);
 
-            for (let i = 0; i < Math.min(profiles.length, TOP); i++) {
-                const name = `${parsed.name}-${i}`;
-                const profile = applySourceMappingToProfile(profiles[i]);
-                const foldedProfiles = foldProfiles([profile]);
-
-                fs.writeFileSync(path.join(parsed.dir, `${name}.json`), JSON.stringify(profile, null, 2));
-                fs.writeFileSync(path.join(parsed.dir, `${name}.trace.json`), convertProfile(profile).toJSON());
-                writeFoldedProfiles(foldedProfiles, parsed.dir, name);
+                fs.writeFileSync(path.join(outDir, `${name}.json`), JSON.stringify(profile, null, 2));
+                fs.writeFileSync(path.join(outDir, `${name}.trace.json`), convertProfile(profile).toJSON());
+                await writeFoldedProfiles(folded, outDir, name);
             }
 
             break;
@@ -136,39 +158,67 @@ async function run() {
 
         case "merge": {
             const TOP = 20;
+            const topProfiles = profiles.slice(0, TOP);
+            // Free memory
+            profiles.length = 0;
+            console.info(`Merging first ${topProfiles.length} profiles into single merged.trace.json...`);
+            const mergedProfile = await mergeProfiles(topProfiles);
+            fs.writeFileSync(path.join(outDir, `merged.trace.json`), convertProfile(mergedProfile).toJSON());
+            break;
+        }
 
-            console.info(`Merging first ${TOP} profiles into single profile...`);
-            const mergedProfile = await mergeProfiles(profiles.slice(0, TOP));
+        case "traces": {
+            await loadSourceMaps(resources, sourceMapsDir);
+            console.info(`Converting ${profiles.length} profiles to traces...`);
+            const empty: IProfileDataWithBaseName = {
+                baseName: "",
+                events: [],
+                sampleInterval: 0,
+                trace: {
+                    frames: [],
+                    resources: [],
+                    samples: [],
+                    stacks: [],
+                },
+            };
 
-            fs.writeFileSync(
-                path.join(parsed.dir, `${parsed.name}-merged.trace.json`),
-                convertProfile(mergedProfile).toJSON(),
-            );
+            for (let i = 0; i < profiles.length; i++) {
+                const profile = applySourceMappingToProfile(profiles[i]);
+                const tracePath = path.join(outDir, `${profiles[i].baseName}.trace.json`);
+                // Free memory
+                profiles[i] = empty;
+                fs.writeFileSync(tracePath, convertProfile(profile).toJSON());
+                console.info("Wrote", tracePath);
+            }
+
             break;
         }
 
         case "fold": {
-            await loadSourceMaps(resources, path.join(parsed.dir, "source-maps"));
+            await loadSourceMaps(resources, sourceMapsDir);
             console.info("Folding", profiles.length, "profiles...");
-
-            const foldedProfiles = foldProfiles(profiles);
-
-            // Free memory
+            const mapped = profiles.map((p) => applySourceMappingToProfile(p));
+            // Free memory; actually not so much because all refs are still contained in `mapped`
             profiles.length = 0;
-            writeFoldedProfiles(foldedProfiles, parsed.dir, parsed.name);
+
+            const foldedProfiles = foldProfiles(mapped);
+            // Free memory
+            mapped.length = 0;
+
+            const foldedFiles = await writeFoldedProfiles(foldedProfiles, outDir, "aggregated");
+            generateFlamegraphs(foldedFiles);
             break;
         }
 
         case "resources": {
-            console.info("Finding all resources...");
-            console.info("Found", resources.length, "resources");
-            fs.writeFileSync(path.join(parsed.dir, `${parsed.name}-resources.txt`), resources.join("\n"));
+            console.info("Found", resources.length, "resources. Writing to profiles-resources.txt...");
+            fs.writeFileSync(path.join(outDir, "profiles-resources.txt"), resources.join("\n"));
             break;
         }
 
         case "download-maps": {
             console.info("Downloading source maps...");
-            await loadSourceMaps(resources, path.join(parsed.dir, "source-maps"));
+            await loadSourceMaps(resources, sourceMapsDir);
             break;
         }
 
@@ -179,4 +229,7 @@ async function run() {
     }
 }
 
-void run();
+void run().catch((e) => {
+    console.error(e);
+    process.exit(1);
+});

@@ -117,28 +117,27 @@ export async function mergeFrames(
 ): Promise<Map<number, number>> {
     return withTimer("mergeFrames", async () => {
         const lengthBefore = frames.length;
-        const mapping = new Map<number, number>();
+        const frameMapping = new Map<number, number>();
 
         for (let i = 0; i < framesToMerge.length; i++) {
             const f2 = framesToMerge[i];
-            const frameIndex = frames.findIndex(
+            const mergedFrameIndex = frames.findIndex(
                 (f) => f.name === f2.name && f.line === f2.line && f.column === f2.column && f.resource === f2.resource,
             );
 
-            if (frameIndex !== -1) {
-                mapping.set(i, frameIndex);
+            if (mergedFrameIndex !== -1) {
+                frameMapping.set(i, mergedFrameIndex);
             } else {
-                mapping.set(i, frames.length);
+                frameMapping.set(i, frames.length);
                 frames.push(f2);
             }
         }
 
         const added = frames.length - lengthBefore;
         const merged = framesToMerge.length - added;
-
         console.info(`mergeFrames: ${added} frames added, ${merged} frames merged`);
 
-        return mapping;
+        return frameMapping;
     });
 }
 
@@ -150,44 +149,55 @@ export async function mergeStacks(
 ): Promise<Map<number, number>> {
     return withTimer("mergeStacks", async () => {
         const lengthBefore = stacks.length;
-        const mapping = new Map<number, number>();
+        const stackMapping = new Map<number, number>();
+        let unmergedFrames = 0;
 
-        while (mapping.size < stacksToMerge.length) {
+        while (stackMapping.size < stacksToMerge.length) {
             for (let i = 0; i < stacksToMerge.length; i++) {
-                const {frameId, parentId} = stacksToMerge[i];
+                if (stackMapping.has(i)) {
+                    continue;
+                }
 
-                if (mapping.has(i) || (parentId !== undefined && !mapping.has(parentId))) {
+                const {frameId: unmergedFrameId, parentId: unmergedParentId} = stacksToMerge[i];
+                const mergedParentId = unmergedParentId !== undefined ? stackMapping.get(unmergedParentId) : undefined;
+                if (unmergedParentId !== undefined && mergedParentId === undefined) {
+                    // No mapping yet. Continue with other stacks.
                     continue;
                 }
 
                 if (unusedStacks.has(i)) {
-                    mapping.set(i, -1);
+                    stackMapping.set(i, -1);
                     continue;
                 }
 
-                const newFrameId = frameMapping.get(frameId) || frameId;
-                const stackIndex = stacks.findIndex((s) => s.frameId === newFrameId && s.parentId === parentId);
+                let mergedFrameId = frameMapping.get(unmergedFrameId);
+                if (mergedFrameId === undefined) {
+                    console.error(
+                        `mergeStacks: mapped frame for ${unmergedFrameId} not found, will use ${unmergedFrameId} instead`,
+                    );
+                    unmergedFrames++;
+                    mergedFrameId = unmergedFrameId;
+                }
+                const mergedStackIndex = stacks.findIndex(
+                    (s) => s.frameId === mergedFrameId && s.parentId === mergedParentId,
+                );
 
-                if (stackIndex !== -1) {
-                    mapping.set(i, stackIndex);
+                if (mergedStackIndex !== -1) {
+                    stackMapping.set(i, mergedStackIndex);
                 } else {
-                    mapping.set(i, stacks.length);
-                    const newStack: IProfilerStack = {
-                        frameId: newFrameId,
-                        parentId: parentId !== undefined ? mapping.get(parentId) : undefined,
-                    };
-
-                    stacks.push(newStack);
+                    stackMapping.set(i, stacks.length);
+                    stacks.push({frameId: mergedFrameId, parentId: mergedParentId});
                 }
             }
         }
 
         const added = stacks.length - lengthBefore;
         const merged = stacksToMerge.length - added - unusedStacks.size;
+        console.info(
+            `mergeStacks: ${added} stacks added, ${merged} stacks merged, ${unusedStacks.size} stacks unused, ${unmergedFrames} unmerged frames found`,
+        );
 
-        console.info(`mergeStacks: ${added} stacks added, ${merged} stacks merged, ${unusedStacks.size} stacks unused`);
-
-        return mapping;
+        return stackMapping;
     });
 }
 
@@ -218,7 +228,6 @@ function mergeSamples(
 function mergeEvents(events: IProfiledEvent[], eventsToMerge: IProfiledEvent[], timestampOffset: number): void {
     for (let i = 0; i < eventsToMerge.length; i++) {
         const {timestamp, type} = eventsToMerge[i];
-
         events.push({timestamp: timestampOffset + timestamp, type});
     }
 }
@@ -256,7 +265,6 @@ export async function mergeProfiles(profiles: IProfileData[]): Promise<IProfileD
 
     for (let i = 0; i < profiles.length; i++) {
         const profile = profiles[i];
-
         if (profile.trace.samples.length === 0) {
             continue;
         }
@@ -264,7 +272,6 @@ export async function mergeProfiles(profiles: IProfileData[]): Promise<IProfileD
         await mergeTraces(mergedProfile, denormalizeFrames(profile));
 
         const currentTime = Date.now();
-
         if (currentTime - lastTime > 1000) {
             console.info("Merged", i, "of", profiles.length, "profiles");
             lastTime = currentTime;

@@ -9,7 +9,8 @@ import type {IProfileData} from "../profiler/profiler";
 const maps = new Map<string, TraceMap>();
 
 export async function loadSourceMaps(resources: string[], dirToStore: string): Promise<void> {
-    const scriptsWithMaps = resources.filter((script) => script.startsWith("http") && script.endsWith(".js"));
+    // Absolute http(s) URLs and same-origin paths from the demo app (/assets/…).
+    const scriptsWithMaps = resources.filter((script) => /^(?:https?:\/\/|\/).+\.js$/.test(script));
 
     console.info("Found", scriptsWithMaps.length, "scripts");
     console.info("Storing source maps in", dirToStore);
@@ -38,51 +39,56 @@ export async function loadSourceMaps(resources: string[], dirToStore: string): P
 
 async function loadSourceMapForScript(url: string, dirToStore: string): Promise<string | undefined> {
     const sourceMapPath = path.join(dirToStore, `${path.basename(url)}.map`);
-
     if (fs.existsSync(sourceMapPath)) {
         return fs.readFileSync(sourceMapPath, "utf8");
     }
 
-    console.info("Downloading script", url);
-    const response = await fetch(url);
-    const scriptContent = await response.text();
-
-    if (!response.ok) {
-        console.warn(`Failed to fetch source file: ${response.statusText}`);
-
+    const origin = process.env.DEMO_ORIGIN ?? "http://localhost:4173";
+    const absoluteUrl = url.startsWith("http") ? url : new URL(url, origin).href;
+    console.info("Downloading script", absoluteUrl);
+    let response: Response;
+    try {
+        response = await fetch(absoluteUrl);
+    } catch (error) {
+        console.warn(`Failed to fetch source file ${absoluteUrl}:`, error);
         return undefined;
     }
 
+    if (!response.ok) {
+        console.warn(`Failed to fetch source file: ${response.statusText}`);
+        await response.body?.cancel();
+        return undefined;
+    }
+
+    const scriptContent = await response.text();
     const PREFIX = "//# sourceMappingURL=";
     const pos = scriptContent.lastIndexOf(PREFIX);
-
     if (pos === -1) {
         return undefined;
     }
 
-    const sourceMapUrl = scriptContent.slice(pos + PREFIX.length);
-
-    /*
-    // Если URL относительный, то преобразуем его в абсолютный
     let sourceMapUrl = scriptContent.slice(pos + PREFIX.length).trim();
-    if (!sourceMapUrl.startsWith('http')) {
-        const baseUrl = new URL(url);
-        sourceMapUrl = new URL(sourceMapUrl, baseUrl).href;
+    if (!sourceMapUrl.startsWith("http") && !sourceMapUrl.startsWith("data:")) {
+        sourceMapUrl = new URL(sourceMapUrl, absoluteUrl).href;
     }
-    */
 
     console.info("Downloading source map", sourceMapUrl);
-    const sourceMapResponse = await fetch(sourceMapUrl);
-    const sourceMapContent = await sourceMapResponse.text();
-
-    if (!sourceMapResponse.ok) {
-        console.warn(`Failed to fetch source map file: ${sourceMapResponse.statusText}`);
-
+    let sourceMapResponse: Response;
+    try {
+        sourceMapResponse = await fetch(sourceMapUrl);
+    } catch (error) {
+        console.warn(`Failed to fetch source map ${sourceMapUrl}:`, error);
         return undefined;
     }
 
-    fs.writeFileSync(sourceMapPath, sourceMapContent);
+    if (!sourceMapResponse.ok) {
+        console.warn(`Failed to fetch source map file: ${sourceMapResponse.statusText}`);
+        await sourceMapResponse.body?.cancel();
+        return undefined;
+    }
 
+    const sourceMapContent = await sourceMapResponse.text();
+    fs.writeFileSync(sourceMapPath, sourceMapContent);
     return sourceMapContent;
 }
 
@@ -193,7 +199,7 @@ export function getMostWantedPositions(count: number): [TPosition, number][] {
         .map(([position, count]) => [position, count]);
 }
 
-export function applySourceMappingToProfile(profile: IProfileData): IProfileData {
+export function applySourceMappingToProfile<T extends IProfileData>(profile: T): T {
     const frames = profile.trace.frames;
     const resources = profile.trace.resources;
 

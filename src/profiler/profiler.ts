@@ -1,9 +1,7 @@
-import {compressObject, decompressObject} from "./codec";
+import {compressObject} from "./codec";
 import type {IProfilerInitOptions, IProfilerSample, IProfilerTrace, IWindowWithProfiler} from "./types";
 
 export interface IProfilerConfig extends Partial<IProfilerInitOptions> {
-    /** Длительность записи в миллисекундах */
-    duration?: number;
     /** Запас времени в миллисекундах, чтобы собрать все сэмплы последнего события */
     durationAfterLastEvent?: number;
     eventNames?: string[];
@@ -24,7 +22,6 @@ export interface IProfileData {
 
 export class Profiler {
     private static readonly DEFAULT_CONFIG: Required<IProfilerConfig> = {
-        duration: 10000,
         durationAfterLastEvent: 300,
         // Представляющие интерес пользовательские события; после них скорее всего будет рендер
         eventNames: ["mousedown", "touchstart", "pointerdown", "click"],
@@ -37,7 +34,6 @@ export class Profiler {
     private config: Required<IProfilerConfig>;
     private isRunning = false;
     private nativeProfiler?: InstanceType<NonNullable<IWindowWithProfiler["Profiler"]>>;
-    private timeoutId?: ReturnType<typeof setTimeout>;
     private events: IProfiledEvent[] = [];
 
     constructor(config: IProfilerConfig = {}) {
@@ -61,7 +57,6 @@ export class Profiler {
             });
 
             this.addEventListeners();
-            this.scheduleStop();
             this.isRunning = true;
             console.log("Started with sampleInterval", this.nativeProfiler.sampleInterval);
 
@@ -124,18 +119,8 @@ export class Profiler {
         });
     }
 
-    private scheduleStop(): void {
-        this.timeoutId = setTimeout(() => {
-            this.stop();
-        }, this.config.duration);
-    }
-
     private cleanup(): void {
         this.removeEventListeners();
-
-        clearTimeout(this.timeoutId);
-        this.timeoutId = undefined;
-
         this.isRunning = false;
         this.nativeProfiler = undefined;
         this.events = [];
@@ -146,7 +131,7 @@ export class Profiler {
      */
     private stripSamplesWithoutEvents(samples: IProfilerSample[], events: IProfiledEvent[]) {
         const minTime = events[0].timestamp;
-        const maxTime = events[length - 1].timestamp + this.config.durationAfterLastEvent;
+        const maxTime = events[events.length - 1].timestamp + this.config.durationAfterLastEvent;
         return samples.filter((sample) => sample.timestamp >= minTime && sample.timestamp <= maxTime);
     }
 
@@ -163,9 +148,10 @@ export class Profiler {
             }
 
             trace.samples = this.stripSamplesWithoutEvents(trace.samples, events);
-            // Удаляем параметры из URL ресурсов, чтобы уменьшить размер данных
-            trace.resources = trace.resources.map((resource) => resource.split("?")[0]);
         }
+
+        // Удаляем параметры из URL ресурсов, чтобы уменьшить размер данных
+        trace.resources = trace.resources.map((resource) => resource.split("?")[0]);
 
         const compressed = await this.compressProfile({events, sampleInterval, trace});
         console.log("Events", events);
@@ -175,9 +161,5 @@ export class Profiler {
 
     async compressProfile(data: IProfileData): Promise<string> {
         return compressObject(data);
-    }
-
-    async decompressProfile(compressed: string): Promise<IProfileData> {
-        return decompressObject<IProfileData>(compressed);
     }
 }

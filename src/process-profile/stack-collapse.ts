@@ -119,7 +119,7 @@ export function foldProfiles(profiles: IProfileData[]): IFoldedProfiles {
     return foldedProfiles;
 }
 
-function writeFoldedProfile(foldedProfile: Map<string, number>, fileName: string): void {
+async function writeFoldedProfile(foldedProfile: Map<string, number>, fileName: string): Promise<string> {
     console.info("Writing", foldedProfile.size, "lines to", fileName);
 
     const output = fs.createWriteStream(fileName, "utf8");
@@ -133,17 +133,32 @@ function writeFoldedProfile(foldedProfile: Map<string, number>, fileName: string
         }
     }
 
-    output.end();
+    await new Promise<void>((resolve, reject) => {
+        output.on("finish", resolve);
+        output.on("error", reject);
+        output.end();
+    });
     // Free memory
     foldedProfile.clear();
+    return fileName;
 }
 
-export function writeFoldedProfiles(foldedProfiles: IFoldedProfiles, dir: string, namePrefix: string): void {
-    writeFoldedProfile(foldedProfiles.all, path.join(dir, `${namePrefix}-folded-all.txt`));
-    writeFoldedProfile(foldedProfiles.allReversed, path.join(dir, `${namePrefix}-folded-all-reversed.txt`));
-    writeFoldedProfile(foldedProfiles.modules, path.join(dir, `${namePrefix}-folded-modules.txt`));
-    writeFoldedProfile(foldedProfiles.modules1stParty, path.join(dir, `${namePrefix}-folded-modules-1st-party.txt`));
-    writeFoldedProfile(foldedProfiles.withoutReact, path.join(dir, `${namePrefix}-folded-without-react.txt`));
+export async function writeFoldedProfiles(
+    foldedProfiles: IFoldedProfiles,
+    dir: string,
+    namePrefix: string,
+): Promise<string[]> {
+    const fileNames = [
+        await writeFoldedProfile(foldedProfiles.all, path.join(dir, `${namePrefix}-folded-all.txt`)),
+        await writeFoldedProfile(foldedProfiles.allReversed, path.join(dir, `${namePrefix}-folded-all-reversed.txt`)),
+        await writeFoldedProfile(foldedProfiles.modules, path.join(dir, `${namePrefix}-folded-modules.txt`)),
+        await writeFoldedProfile(
+            foldedProfiles.modules1stParty,
+            path.join(dir, `${namePrefix}-folded-modules-1st-party.txt`),
+        ),
+        await writeFoldedProfile(foldedProfiles.withoutReact, path.join(dir, `${namePrefix}-folded-without-react.txt`)),
+    ];
 
     console.info("Most wanted source map positions:", getMostWantedPositions(10));
+    return fileNames;
 }

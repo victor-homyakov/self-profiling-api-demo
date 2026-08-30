@@ -4,7 +4,7 @@ import react from "eslint-plugin-react";
 import reactHooks from "eslint-plugin-react-hooks";
 
 export default [
-    {ignores: ["dist/**", "node_modules/**", "*.config.js", "*.config.ts"]},
+    {ignores: ["dist/**", "node_modules/**", "tools/**", "*.config.js", "*.config.ts"]},
     ...tsPlugin.configs["flat/recommended"],
     {
         files: ["**/*.{ts,tsx}"],
