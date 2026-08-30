@@ -4,3 +4,4 @@ package-lock.json
 profiles
 coverage
 *.md
+tools/FlameGraph

@@ -1,9 +1,8 @@
 import type {CSSProperties} from "react";
-import {useRef, useState} from "react";
-import {Profiler as NativeProfiler} from "../profiler/profiler";
+import {useState} from "react";
 
 /** Искусственная задержка в рендере (для «тяжёлого» сценария) */
-function burnCPU(ms: number): void {
+export function burnCPU(ms: number): void {
     const end = performance.now() + ms;
     while (performance.now() < end) {
         // busy loop
@@ -34,13 +33,41 @@ function shuffleArray<T>(array: T[]): T[] {
 
 export const HEAVY_MS = 50;
 
+const blockStyle: CSSProperties = {
+    border: "1px solid #e2e8f0",
+    borderRadius: 8,
+    padding: 16,
+    marginTop: 12,
+};
+const pStyle: CSSProperties = {margin: "0 0 12px", fontSize: "0.9em", color: "#64748b"};
+const buttonStyle: CSSProperties = {
+    padding: "8px 14px",
+    borderRadius: 6,
+    border: "1px solid #94a3b8",
+    background: "#f1f5f9",
+    cursor: "pointer",
+};
+const itemStyle: CSSProperties = {
+    border: "1px solid #e2e8f0",
+    borderRadius: 6,
+    marginTop: 4,
+    padding: "8px 12px",
+};
+
+function ListItem({item, isSelected, isHeavy}: {item: string; isSelected: boolean; isHeavy?: boolean}) {
+    if (isHeavy) {
+        burnCPU(HEAVY_MS);
+    }
+
+    return <li style={{...itemStyle, background: isSelected ? "#dbeafe" : "#f8fafc"}}>{item}</li>;
+}
+
 /**
- * Лёгкий или тяжёлый рендер: искусственная задержка в рендере.
- * Экспортируется для страницы демо DevTools Performance.
+ * Лёгкий или тяжёлый рендер: искусственная задержка в рендере (INP Scenario content).
  */
 export function LightOrHeavyRenderScenario({isHeavy}: {isHeavy: boolean}) {
     const [items, setItems] = useState(() => [...LIGHT_ITEMS]);
-    const [selected, setSelected] = useState<string>(LIGHT_ITEMS[0]);
+    const [selected, setSelected] = useState<string>(LIGHT_ITEMS[0]!);
 
     if (isHeavy) {
         burnCPU(HEAVY_MS);
@@ -54,7 +81,7 @@ export function LightOrHeavyRenderScenario({isHeavy}: {isHeavy: boolean}) {
         setSelected((prev) => {
             const idx = items.indexOf(prev);
             const next = (idx + 1) % items.length;
-            return items[next];
+            return items[next]!;
         });
     };
 
@@ -78,132 +105,26 @@ export function LightOrHeavyRenderScenario({isHeavy}: {isHeavy: boolean}) {
     );
 }
 
-const itemStyle: CSSProperties = {
-    border: "1px solid #e2e8f0",
-    borderRadius: 6,
-    marginTop: 4,
-    padding: "8px 12px",
-};
-
-function ListItem({item, isSelected, isHeavy}: {item: string; isSelected: boolean; isHeavy?: boolean}) {
-    if (isHeavy) {
-        burnCPU(HEAVY_MS);
-    }
-
-    return <li style={{...itemStyle, background: isSelected ? "#dbeafe" : "#f8fafc"}}>{item}</li>;
-}
-
-const blockStyle: CSSProperties = {
-    border: "1px solid #e2e8f0",
-    borderRadius: 8,
-    padding: 16,
-    marginTop: 12,
-};
-const pStyle: CSSProperties = {margin: "0 0 12px", fontSize: "0.9em", color: "#64748b"};
-const buttonStyle: CSSProperties = {
-    padding: "8px 14px",
-    borderRadius: 6,
-    border: "1px solid #94a3b8",
-    background: "#f1f5f9",
-    cursor: "pointer",
-};
-
-export function LightHeavyRenderDemo() {
-    const [isHeavy, setIsHeavy] = useState(false);
-    const [selfProfilingRecording, setSelfProfilingRecording] = useState(false);
-    const [selfProfilingError, setSelfProfilingError] = useState<string | null>(null);
-    const nativeProfiler = useRef<NativeProfiler | null>(null);
-
-    function startSelfProfiling() {
-        setSelfProfilingError(null);
-        nativeProfiler.current = new NativeProfiler();
-        const started = nativeProfiler.current.start();
-        if (!started) {
-            setSelfProfilingError(
-                "Self-profiling API недоступен. Проверь заголовок Document-Policy: js-profiling " +
-                    "(работает только в dev/profiling сборке через npm run dev или npm run preview:profiling).",
-            );
-            return;
-        }
-        setSelfProfilingRecording(true);
-    }
-
-    function stopSelfProfilingAndDownload() {
-        const profile = nativeProfiler.current?.stop();
-        setSelfProfilingRecording(false);
-
-        profile
-            ?.then((profile) => {
-                console.log("[Native Profiler] Профиль:", profile);
-                if (!profile) {
-                    return;
-                }
-
-                const blob = new Blob([profile], {type: "text/plain"});
-                const url = URL.createObjectURL(blob);
-                const a = document.createElement("a");
-                a.href = url;
-                a.download = `native-profiler-${Date.now()}.txt`;
-                a.click();
-                URL.revokeObjectURL(url);
-            })
-            .catch((error) => {
-                console.error("[Native Profiler] Ошибка:", error);
-            });
-    }
-
+export function HeavyModeToggle({isHeavy, onChange}: {isHeavy: boolean; onChange: (heavy: boolean) => void}) {
     return (
-        <div style={{marginTop: 16}}>
-            <section style={{marginBottom: 24}}>
-                <h3 style={{margin: "0 0 8px", fontSize: "1.1em"}}>Режим рендера</h3>
-                <div style={{display: "flex", gap: 8}}>
-                    <button
-                        onClick={() => setIsHeavy(false)}
-                        style={{...buttonStyle, background: !isHeavy ? "#dbeafe" : undefined}}
-                        type="button"
-                    >
-                        Лёгкий рендер
-                    </button>
-                    <button
-                        onClick={() => setIsHeavy(true)}
-                        style={{...buttonStyle, background: isHeavy ? "#dbeafe" : undefined}}
-                        type="button"
-                    >
-                        Тяжёлый рендер
-                    </button>
-                </div>
-            </section>
-
-            <section style={{marginBottom: 24}}>
-                <h3 style={{margin: "0 0 8px", fontSize: "1.1em"}}>Self-profiling (экспорт в JSON)</h3>
-                <div style={{display: "flex", gap: 8, alignItems: "center", flexWrap: "wrap"}}>
-                    <button
-                        disabled={selfProfilingRecording}
-                        onClick={startSelfProfiling}
-                        style={buttonStyle}
-                        type="button"
-                    >
-                        Старт Self-profiling
-                    </button>
-                    <button
-                        disabled={!selfProfilingRecording}
-                        onClick={stopSelfProfilingAndDownload}
-                        style={buttonStyle}
-                        type="button"
-                    >
-                        Стоп и скачать
-                    </button>
-                    {!!selfProfilingRecording && <span style={{color: "#dc2626", fontWeight: 500}}>Идёт запись…</span>}
-                </div>
-                {!!selfProfilingError && (
-                    <p style={{color: "#dc2626", fontSize: "0.85em", marginTop: 8}}>{selfProfilingError}</p>
-                )}
-            </section>
-
-            <section>
-                <h3 style={{margin: "0 0 8px", fontSize: "1.1em"}}>Контент</h3>
-                <LightOrHeavyRenderScenario isHeavy={isHeavy} />
-            </section>
-        </div>
+        <section style={{marginBottom: 24}}>
+            <h3 style={{margin: "0 0 8px", fontSize: "1.1em"}}>Режим рендера</h3>
+            <div style={{display: "flex", gap: 8}}>
+                <button
+                    onClick={() => onChange(false)}
+                    style={{...buttonStyle, background: !isHeavy ? "#dbeafe" : undefined}}
+                    type="button"
+                >
+                    Лёгкий рендер
+                </button>
+                <button
+                    onClick={() => onChange(true)}
+                    style={{...buttonStyle, background: isHeavy ? "#dbeafe" : undefined}}
+                    type="button"
+                >
+                    Тяжёлый рендер
+                </button>
+            </div>
+        </section>
     );
 }
