@@ -1,6 +1,6 @@
 import {defineConfig} from "vite";
 import react from "@vitejs/plugin-react";
-import {demoServerPlugin} from "./vite-plugin-demo-server";
+import {demoServerPlugin} from "./vite-plugin-demo-server.ts";
 
 export default defineConfig(({mode}) => {
     const isProfiling = mode === "profiling";
