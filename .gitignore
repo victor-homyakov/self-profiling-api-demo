@@ -6,3 +6,7 @@ node_modules
 /profiles/*
 !/profiles/.gitkeep
 !/profiles/flamegraph-all.sh
+*.local
+.vite-inspect
+.remote-assets
+components.d.ts
