@@ -38,7 +38,8 @@
     "dependencies": {
         "react": "^19.0.0",
         "react-dom": "^19.0.0",
-        "react-router-dom": "^7.0.0"
+        "react-router-dom": "^7.0.0",
+        "slidev-theme-dracula": "^0.2.5"
     },
     "devDependencies": {
         "@jridgewell/trace-mapping": "^0.3.31",

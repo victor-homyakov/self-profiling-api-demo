@@ -1,5 +1,6 @@
 ---
 duration: 42min
+theme: dracula
 addons:
   - slidev-addon-qrcode
   - slidev-addon-second-screen
