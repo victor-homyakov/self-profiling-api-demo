@@ -15,7 +15,7 @@ interface IProfileDataWithBaseName extends IProfileData {
 }
 
 function isProfilePayloadFile(name: string): boolean {
-    return name.endsWith(".txt") && !name.includes("-folded-") && !name.endsWith("-resources.txt");
+    return name.endsWith(".b64");
 }
 
 async function loadProfilesFromPath(inputPath: string): Promise<IProfileDataWithBaseName[]> {
@@ -35,7 +35,7 @@ async function loadProfilesFromPath(inputPath: string): Promise<IProfileDataWith
         : [resolved];
 
     if (!files.length) {
-        console.error(`No Profile payload .txt files in ${resolved}`);
+        console.error(`No Profile payload .b64 files in ${resolved}`);
         process.exit(1);
     }
 

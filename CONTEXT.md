@@ -17,7 +17,7 @@ An SVG visualization of folded stacks from one or more Profiles. Live path: gene
 _Avoid_: Chart, heatmap, flame chart (Chrome DevTools term)
 
 **Profile payload**:
-The downloaded/uploaded file is compressed base64 (often `.txt`). After decompress/decode on the server it becomes Profile JSON. The processing CLI reads many such files from `profiles/` (client uploads).
+The downloaded/uploaded file is compressed base64 (extension `.b64`). After decompress/decode on the server it becomes Profile JSON. The processing CLI reads many such files from `profiles/` (client uploads).
 _Avoid_: “JSON download” (when meaning the wire file)
 
 **INP Scenario**:

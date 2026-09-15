@@ -23,7 +23,7 @@ npm run preview   # production build + source maps + Document-Policy: js-profili
 
 ## Флоу обработки
 
-1. На `/inp` — Старт → взаимодействие → Стоп → payload (gzip+base64 `.txt`) в `profiles/`.
+1. На `/inp` — Старт → взаимодействие → Стоп → payload (gzip+base64 `.b64`) в `profiles/`.
 2. В `profiles/` заранее можно положить ещё несколько payload-файлов для демонстрации агрегации профилей (fold).
 3. Терминал:
 
@@ -35,7 +35,7 @@ npm run process-profile -- fold profiles
 # SVG появятся в profiles/; в демо страница /flamegraph
 ```
 
-Вход CLI — **много** `.txt` payload. См. ADR 0001. Перед обработкой дополнительно чистятся и анонимизируются адреса
+Вход CLI — **много** `.b64` payload. См. ADR 0001. Перед обработкой дополнительно чистятся и анонимизируются адреса
 ресурсов в `cleanupResource()` — есть смысл заглянуть туда и настроить под себя.
 
 Команды CLI:

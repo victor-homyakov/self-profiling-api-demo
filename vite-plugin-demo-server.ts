@@ -4,7 +4,7 @@ import type {ServerResponse} from "node:http";
 import type {Connect, Plugin, PreviewServer, ViteDevServer} from "vite";
 
 const PROFILES_DIR = path.resolve("profiles");
-const PAYLOAD_EXT = ".txt";
+const PAYLOAD_EXT = ".b64";
 /** Profile payloads are gzip+base64 text; 10 MiB is plenty for demo uploads. */
 const MAX_UPLOAD_BYTES = 10 * 1024 * 1024;
 
