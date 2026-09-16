@@ -27,7 +27,7 @@
         "demo:build:profiling": "vite build --mode profiling",
         "demo:preview": "npm run build && vite preview",
         "demo:preview:profiling": "npm run build:profiling && vite preview --mode profiling",
-        "demo:process-profile": "tsx src/process-profile/index.ts",
+        "process-profile": "tsx src/process-profile/index.ts",
         "lint": "eslint . && prettier --check .",
         "lint:fix": "eslint . --fix && prettier --write .",
         "test": "jest",

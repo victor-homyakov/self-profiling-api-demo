@@ -40,7 +40,7 @@ export function FlamegraphPage() {
         <div>
             <h1>Flamegraph</h1>
             <p>
-                Свежие SVG из последнего прогона <code>fold</code> (не галерея overview со слайдов).
+                Свежие SVG из последнего прогона <code>npm run process-profile -- fold profiles</code>.
             </p>
             <button
                 onClick={() => void refresh()}
@@ -66,7 +66,7 @@ export function FlamegraphPage() {
                 {items.map((item) => (
                     <figure key={item.name} style={{margin: 0}}>
                         <figcaption style={{marginBottom: 8, fontFamily: "monospace", fontSize: "0.85em"}}>
-                            {item.name}
+                            <h2>{item.name}</h2>
                         </figcaption>
                         <img alt={item.name} src={item.url} style={{maxWidth: "100%", border: "1px solid #e2e8f0"}} />
                     </figure>

@@ -10,6 +10,7 @@ import {
 
 const INP_OPTIONS: IUseProfilerSessionOptions = {
     scenario: "inp",
+    autoStopAfterMs: 10000,
     config: {
         eventNames: ["mousedown", "touchstart", "pointerdown", "click"],
         stripSamplesWithoutEvents: true,
@@ -18,17 +19,17 @@ const INP_OPTIONS: IUseProfilerSessionOptions = {
 
 export function InpPage() {
     const [isHeavy, setIsHeavy] = useState(true);
-    const {status, start, stopAndUpload} = useProfilerSession(INP_OPTIONS);
+    const {status, start, stop, stopAndUpload} = useProfilerSession(INP_OPTIONS);
 
     useEffect(() => {
-        start();
+        // start();
         return () => {
-            // Если при уходе с компонента INP нас больше не интересует - можем остановить профайлер
-            // void stop();
+            // Если при уходе с компонента INP нас больше не интересует - останавливаем профайлер
+            void stop();
             // Останавливаем профилирование и отправляем собранный профиль
-            void stopAndUpload();
+            // void stopAndUpload();
         };
-    }, [start, stopAndUpload]);
+    }, [stop]);
 
     return (
         <ScenarioLayout
