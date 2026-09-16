@@ -33,11 +33,15 @@ function Layout({children}: {children: ReactNode}) {
         <div style={{display: "flex", minHeight: "100vh"}}>
             <aside
                 style={{
+                    alignSelf: "flex-start",
                     background: "#fff",
                     borderRight: "1px solid #e2e8f0",
                     display: "flex",
                     flexDirection: "column",
+                    height: "100vh",
                     padding: "16px 0",
+                    position: "sticky",
+                    top: 0,
                     width: 200,
                 }}
             >
