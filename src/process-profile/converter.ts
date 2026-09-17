@@ -34,9 +34,14 @@ export function convertProfile(profile: IProfileData): Trace {
         // trace.asyncEvent('event', event.type, {}, event.timestamp, event.timestamp + sampleInterval / 2);
     }
 
-    for (const sample of t.samples) {
-        addStack(trace, t, sample.stackId, sample.timestamp, sample.timestamp + sampleInterval);
-        addResource(trace, t, sample.stackId, sample.timestamp, sample.timestamp + sampleInterval);
+    for (let i = 0; i < t.samples.length; i++) {
+        const sample = t.samples[i];
+        const begin = sample.timestamp;
+        const nextBegin = i < t.samples.length - 1 ? t.samples[i + 1].timestamp : begin + sampleInterval;
+        // Иногда сэмплы идут не строго через sampleInterval. Чтобы спаны в трейсе не пересекались, берем минимальное из двух значений.
+        const end = Math.min(nextBegin, begin + sampleInterval);
+        addStack(trace, t, sample.stackId, begin, end);
+        addResource(trace, t, sample.stackId, begin, end);
     }
 
     return trace;
