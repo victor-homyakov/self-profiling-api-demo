@@ -11,6 +11,10 @@ addons:
 # Self-Profiling API
 ## как узнать, почему у пользователя всё тормозит
 
+<br /><br /><br />
+
+## Виктор Хомяков
+
 <!--
 
 Подготовка:
@@ -25,10 +29,18 @@ addons:
 section: true
 ---
 
-# О себе
+## О себе
 
-- Яндекс Поиск
-- Яндекс Игры
+<div class="mt-6 flex flex-col gap-5 text-3xl">
+  <div class="flex items-center gap-4">
+    <img src="/yandex-search.png" alt="" class="h-16 w-16" />
+    Яндекс Поиск
+  </div>
+  <div class="flex items-center gap-4">
+    <img src="/yandex-games.png" alt="" class="h-16 w-16 rounded-2xl" />
+    Яндекс Игры
+  </div>
+</div>
 
 <!--
 
@@ -40,7 +52,7 @@ section: true
 
 ---
 
-# О себе
+## О себе
 
 Это продолжение серии докладов о производительности и профилировании
 
@@ -59,32 +71,172 @@ section: true
 section: true
 ---
 
-# О профилировании
+## Профилирование и профайлер
 
-О профилировании вообще,
+Профилирование — измерение и анализ производительности кода, чтобы найти узкие места
 
-Сэмплирование и инструментирование
-
----
-
-# О профилировании
-
- о DevTools - что и как использовать
-Firefox, Safari - что там есть. Почему Chrome DevTools (а также Chromium, Edge, Opera, Yandex).
-Если в Chrome DevTools быстро - то в 99% и в Firefox/Safari будет быстро.
+Два принципиально разных варианта профайлера:
+- инструментирующий
+- сэмплирующий
 
 ---
 
-## Проблема фронтендера с макбуком и iPhone
+## Инструментирующий профайлер
+
+<div class="flex items-center gap-3">
+  <img src="/internet-explorer.svg" alt="" class="h-12 w-12" />
+</div>
+
+<v-click>
+
+Минусы:
+- замедляет старт кода (нужно всё инструментировать)
+- замедляет выполнение мелких функций
+- реализация или медленная или сложная<br />(ленивое инструментирование, динамическое деинструментирование горячего кода)
+
+</v-click>
+
+<v-click>
+
+Плюсы:
+- точное число вызовов, сложность алгоритма
+- замеры работы с DOM (getBoundingClientRect etc.)
+
+</v-click>
+
+<!--
+
+Известная аналогия: инструменты для code coverage типа Istanbul
+
+-->
+
+---
+
+## Сэмплирующий профайлер
+
+Все остальные браузеры и среды выполнения JS
+
+<v-click>
+
+Плюсы:
+- не замедляет старт кода
+- слабо замедляет выполнение кода
+- слабо искажает замеры
+
+</v-click>
+
+<v-click>
+
+Минусы:
+- мелкая редкая функция может не попасть в сэмплы
+- периодическая функция может интерферировать с сэмплами (или пропасть или усилиться)
+- нет числа вызовов (не понимаем сложность алгоритма)
+
+</v-click>
+
+---
+
+## Что использую
+
+- Субъективно в Firefox и Safari — неудобный профайлер
+- Объективно Chrome DevTools функциональнее: есть Performance, Memory, Lighthouse, Trace
+- Chrome (Chromium, Edge, Yandex Browser)
+- Если в Chrome быстро — в 99% и в Firefox/Safari будет быстро
+
+---
+
+## Проблема воспроизведения performance-багов
+
+- Пользователи: жалуются на тормоза
+- Google Search Console говорит: есть тормоза
+- "У меня всё работает" (c)
+
+---
+
+## Проблема воспроизведения performance-багов
+
+<img src="/users/macbook-frontender-1.jpg" alt="" class="mx-auto mt-2 max-h-[22rem] max-w-full object-contain" />
+
+<p class="text-center">Быстрая и стабильная офисная сеть</p>
+
+<!--
 
 Почему недостаточно попрофилировать на макбуке/iPhone фронтендера или в CI - часто не говорит о реальных проблемах в проде, INP, плагины etc.
 
-Программист и тестировщик запускают в офисной сети на мощных MacBook и iPhone, постоянно заряжающихся от сети.
+Программист и тестировщик запускают в быстрой офисной сети на мощных MacBook и iPhone, постоянно заряжающихся от розетки.
 
-Реальные проблемы в проде:
+-->
+
+---
+
+## Проблема воспроизведения performance-багов
+
+<img src="/users/macbook-frontender-2.jpg" alt="" class="mx-auto mt-2 max-h-[22rem] max-w-full object-contain" />
+
+<p class="text-center">Мощные MacBook и iPhone</p>
+
+---
+
+## Проблема воспроизведения performance-багов
+
+<img src="/users/macbook-frontender-3.jpg" alt="" class="mx-auto mt-2 max-h-[22rem] max-w-full object-contain" />
+
+<p class="text-center">Постоянно заряжаются от розетки</p>
+
+---
+
+## Проблема воспроизведения performance-багов
+
+<img src="/users/budget-user-1.webp" alt="" class="mx-auto mt-2 max-h-[22rem] max-w-full object-contain" />
+
+<p class="text-center">Бюджетные ноутбуки</p>
+
+---
+
+## Проблема воспроизведения performance-багов
+
+<img src="/users/budget-user-2.jpg" alt="" class="mx-auto mt-2 max-h-[22rem] max-w-full object-contain" />
+
+<p class="text-center">Дешёвые телефоны</p>
+
+---
+
+## Проблема воспроизведения performance-багов
+
+<img src="/users/budget-user-3.jpeg" alt="" class="mx-auto mt-2 max-h-[22rem] max-w-full object-contain" />
+
+<p class="text-center">Режим экономии батареи</p>
+
+---
+
+## Проблема воспроизведения performance-багов
+
+<img src="/users/budget-user-4.jpg" alt="" class="mx-auto mt-2 max-h-[22rem] max-w-full object-contain" />
+
+<p class="text-center">Плохая сеть</p>
+
+---
+
+## Проблема воспроизведения performance-багов
+
+<img src="/users/budget-user-5.jpg" alt="" class="mx-auto mt-2 max-h-[22rem] max-w-full object-contain" />
+
+<p class="text-center">Много пользователей и сценариев работы</p>
+
+---
+
+## Проблема воспроизведения performance-багов
+
+Реальный мир:
 - бюджетные устройства (пенсионеры на старых ноутбуках, школьники на дешёвых андроидах)
 - неожиданные браузерные расширения
-- режим экономии заряда батареи, многоядерные CPU но код выполняется на энергоэффективных ядрах
+- режим экономии заряда батареи
+- многоядерные CPU, но код выполняется на энергоэффективных ядрах
+
+---
+
+## Проблема воспроизведения performance-багов
+
 - всё медленно открывается, и не всегда причина в сети
 - тормоза JS (INP)
 - тормоза при скролле
@@ -93,16 +245,16 @@ Firefox, Safari - что там есть. Почему Chrome DevTools (а та�
 section: true
 ---
 
-# Что такое Self-Profiling API и как оно поможет
+## Что такое Self-Profiling API и как оно поможет
 
-Доступно с 2021 года
+Доступно в Chromium с 2021 года
 
 https://caniuse.com/wf-profiler
 ![CanIUse Profiler](/caniuse-profiler.png)
 
 ---
 
-# Что такое Self-Profiling API и как оно поможет
+## Что такое Self-Profiling API и как оно поможет
 
 ```js
 const profiler = new Profiler({ maxBufferSize, sampleInterval });
@@ -112,102 +264,30 @@ const profile = await profiler.stop();
 
 <v-clicks>
 
-- MDN содержит описание API и формата данных, но ничего про сценарии использования и пост-обработку результатов
-- 99% статей в сети - краткий пересказ MDN
-- Хороших статей с полезными примерами всего ДВЕ
-- Готового софта и библиотек, работающих с этим форматом, нет
-- ИИ не поможет: ей просто не на чем было обучаться
+- MDN содержит описание API и формата данных,<br />
+  ничего про сценарии использования и обработку результатов
+- 99% статей в сети — краткий пересказ MDN
+- Хороших статей с полезными примерами всего ДВЕ, и вторая опирается на первую
+- Нет софта, работающего с этим форматом
+- ИИ не поможет: не на чем было обучаться
 
 </v-clicks>
-
-<!--
-
-Базовая идея: у кучи реальных пользователей запускаем и останавливаем когда НАМ надо
-
--->
-
----
-
-# Байки из прода
-
-- Что я нашёл с помощью Self-Profiling API
-- Примеры анализа
-- Сравнение флеймграфов до/после
-
-TODO показать анализ трейсов live на вкладке браузера
-
----
-
-## Case 1: window.open при клике по ссылке
-
-![Profile](/case-1-open/profile-folded.svg)
-
----
-
-## Case 2: хук логирования показа карточки
-
-- каждая карточка использует хук `useOnShow`
-- при загрузке каталога ВСЕ карточки на первом экране триггерят колбэк в `useOnShow`
-- в колбэке логируется событие показа карточки
-- внутри фильтрация параметров `filterUndefParamsInPlace`
-- решение: ускорить логирование, сделать асинхронным
-
-![Profile](/case-2-hook/profile.png)
-
-<!--
-
-В реальном проде много самых разных параметров, в отличие от тестового окружения.
-Много карточек -> много логов -> долгая фильтрация.
-
--->
-
----
-
-## Case 3: хук получения типа страницы
-
-- хук `useIsErrorPage` используется при рендере каждой ссылки
-- ссылок в каталоге очень много
-- в хуке два `useSelector` + вложенный хук `useCurrentTab`
-- решение: перенести в R/O контекст, считать один раз на странице
-
-![Profile](/case-3-hook/profile.png)
-
----
-
-## Сравнение: исходный профиль
-
-<div class="h-100 overflow-y-auto">
-  <img src="/case-4-comparison/desktop-1.svg" alt="Profile" class="w-full" />
-</div>
-
----
-
-## Сравнение: первая часть оптимизаций
-
-<div class="h-100 overflow-y-auto">
-  <img src="/case-4-comparison/desktop-2.svg" alt="Profile" class="w-full" />
-</div>
-
----
-
-## Сравнение: вторая часть оптимизаций + React 19
-
-<div class="h-100 overflow-y-auto">
-  <img src="/case-4-comparison/desktop-3.svg" alt="Profile" class="w-full" />
-</div>
 
 ---
 
 ## Как реализовать сбор данных
 
-- Когда включаем: по АБ-флагу, по рубильнику в админке и т.п.
-- В заголовках ответа html-страницы `Document-Policy: js-profiling` (Profiler без него не запустится)
-- Заголовок отдаём через nginx, BFF на express, etc.
-- Запускаем профайлер по АБ-флагу, по действию пользователя и т.п.
+<v-clicks>
+
+- Базовая идея: включаем у кучи реальных пользователей и получаем кучу профилей
+- Когда включаем: feature-флаг, рубильник в админке
+- При наличии флага на клиенте запускаем профайлер ASAP/по действию пользователя/etc.
 - Останавливаем профайлер по таймеру, по действию пользователя, по событию window load и т.п.
 - Вырезаем ненужное (это просто JSON), жмём gzip — получается всего десяток килобайт
 - Отправляем на сервер наравне с аналитикой и RUM
 - На сервере пишем в файлы или в БД
+
+</v-clicks>
 
 ---
 
@@ -218,7 +298,8 @@ TODO показать анализ трейсов live на вкладке бр�
 - Отбираем самый интересный профиль
 - <span v-mark.strike-through.red="3">Конвертируем в формат Chrome Profile и открываем в DevTools</span>
 - Пришлось отказаться, ни я ни ИИ не смогли написать конвертер
-- Конвертируем в более простой формат Chrome Trace `*.trace.json` и открываем в https://ui.perfetto.dev/
+- Конвертируем в более простой формат Chrome Trace `*.trace.json`
+- (Демо) Открываем в https://ui.perfetto.dev/
 
 </v-clicks>
 
@@ -232,13 +313,12 @@ TODO показать анализ трейсов live на вкладке бр�
 
 ## Как реализовать обработку данных
 
-Профилей собирается много. Гораздо интереснее их агрегировать.
+Профилей много, интересно их агрегировать
 
 <v-clicks>
 
-- Сливаем все собранные профили в один
 - Сортируем стектрейсы по алфавиту
-- Объединяем одинаковые стектрейсы в один, длительности суммируем
+- Сливаем одинаковые стектрейсы в один, длительности суммируем
 
 </v-clicks>
 
@@ -246,24 +326,22 @@ TODO показать анализ трейсов live на вкладке бр�
 
 ## Как реализовать обработку данных
 
-Сортировка и объединение стектрейсов
-
 <div class="stacks">
   <div v-click class="label">Профиль<br>пользователя 1</div>
   <div v-after class="row">
-    <div class="item"><div class="stack" style="--ms: 5"><span class="fn-a">a</span></div><b>5 ms</b></div>
-    <div class="item"><div class="stack" style="--ms: 5"><span class="fn-a">a</span><span class="fn-b">b</span><span class="fn-c">c</span></div><b>5 ms</b></div>
+    <div class="item"><div class="stack" style="--ms: 10"><span class="fn-a">a</span></div><b>10 ms</b></div>
+    <div class="item"><div class="stack" style="--ms: 10"><span class="fn-a">a</span><span class="fn-b">b</span><span class="fn-c">c</span></div><b>10 ms</b></div>
   </div>
   <div v-click class="label">Профиль<br>пользователя 2</div>
   <div v-after class="row">
-    <div class="item"><div class="stack" style="--ms: 5"><span class="fn-b">b</span></div><b>5 ms</b></div>
+    <div class="item"><div class="stack" style="--ms: 10"><span class="fn-a">a</span><span class="fn-b">b</span></div><b>10 ms</b></div>
     <div class="item"><div class="stack" style="--ms: 10"><span class="fn-a">a</span><span class="fn-b">b</span><span class="fn-c">c</span></div><b>10 ms</b></div>
   </div>
   <div v-click class="label total">Агрегированный<br>профиль</div>
   <div v-after class="row">
-    <div class="item"><div class="stack" style="--ms: 5"><span class="fn-a">a</span></div><b>5 ms</b></div>
-    <div class="item"><div class="stack" style="--ms: 5"><span class="fn-b">b</span></div><b>5 ms</b></div>
-    <div class="item"><div class="stack" style="--ms: 15"><span class="fn-a">a</span><span class="fn-b">b</span><span class="fn-c">c</span></div><b>15 ms</b></div>
+    <div class="item"><div class="stack" style="--ms: 10"><span class="fn-a">a</span></div><b>10 ms</b></div>
+    <div class="item"><div class="stack" style="--ms: 10"><span class="fn-a">a</span><span class="fn-b">b</span></div><b>10 ms</b></div>
+    <div class="item"><div class="stack" style="--ms: 20"><span class="fn-a">a</span><span class="fn-b">b</span><span class="fn-c">c</span></div><b>20 ms</b></div>
   </div>
 </div>
 
@@ -279,7 +357,7 @@ TODO показать анализ трейсов live на вкладке бр�
 .stacks .label {
   font-size: 0.8rem;
   line-height: 1.2;
-  opacity: 0.6;
+  opacity: 0.8;
   padding-bottom: 1.6rem;
 }
 
@@ -305,14 +383,14 @@ TODO показать анализ трейсов live на вкладке бр�
   margin-top: 0.4rem;
   font-size: 0.8rem;
   font-weight: 400;
-  opacity: 0.7;
+  opacity: 0.8;
 }
 
 .stack {
   display: flex;
   flex-direction: column-reverse;
   gap: 2px;
-  width: calc(var(--ms) * 1.1rem);
+  width: calc(var(--ms) * 0.5rem);
   font-family: var(--slidev-code-font-family, monospace);
 }
 
@@ -347,7 +425,8 @@ TODO показать анализ трейсов live на вкладке бр�
 
 - Агрегированный профиль конвертируем в формат stackcollapse
 - Отдаём программе FlameGraph Брендана Грегга https://github.com/brendangregg/FlameGraph
-- Она генерирует интерактивный SVG с флеймграфом, который открываем в браузере и анализируем
+- Она генерирует интерактивный SVG с флеймграфом
+- (Демо) Открываем SVG в браузере и анализируем
 
 </v-clicks>
 
@@ -358,24 +437,90 @@ TODO показать анализ трейсов live на вкладке бр�
 -->
 
 ---
+
+## Байки из прода
+
+- Что я нашёл с помощью Self-Profiling API
+- Примеры анализа
+- Сравнение флеймграфов до/после
+
+---
+
+## Case 1: window.open при клике по ссылке
+
+![Profile](/case-1-open/profile-folded.svg)
+
+---
+
+## Case 2: хук логирования показа карточки
+
+- хотим логировать показ карточек
+- добавили хук `useOnShow` в каждую карточку
+- при загрузке каталога ВСЕ карточки на первом экране триггерят колбэк в `useOnShow`
+- в колбэке долго строим параметры для лога `filterUndefParamsInPlace`
+- решение: ускорить логирование, сделать асинхронным
+
+![Profile](/case-2-hook/profile.png)
+
+<!--
+
+В реальном проде много самых разных параметров, в отличие от тестового окружения.
+Много карточек -> много логов -> долгая фильтрация.
+
+-->
+
+---
+
+## Case 3: хук получения типа страницы
+
+- хотим отслеживать, что пришёл пользователь со страницы 404
+- добавили хук `useIsErrorPage` в рендер каждой ссылки
+- ссылок в каталоге очень много
+- в хуке два `useSelector` + вложенный хук `useCurrentTab`
+- решение: перенести в R/O контекст, считать один раз на странице
+
+![Profile](/case-3-hook/profile.png)
+
+---
+
+## Сравнение: исходный профиль
+
+<div class="h-100 overflow-y-auto">
+  <img src="/case-4-comparison/desktop-1.svg" alt="Profile" class="w-full" />
+</div>
+
+---
+
+## Сравнение: первая часть оптимизаций
+
+<div class="h-100 overflow-y-auto">
+  <img src="/case-4-comparison/desktop-2.svg" alt="Profile" class="w-full" />
+</div>
+
+---
+
+## Сравнение: вторая часть оптимизаций + React 19
+
+<div class="h-100 overflow-y-auto">
+  <img src="/case-4-comparison/desktop-3.svg" alt="Profile" class="w-full" />
+</div>
+
+---
 section: true
 ---
 
-# INP
-
-Что такое INP
+## INP (Interaction to Next Paint)
 
 https://web.dev/articles/inp
 
-Interaction:
-
-- Clicking with a mouse
-- Tapping on a device with a touchscreen
-- Pressing a key on either a physical or onscreen keyboard
+За Interaction считается только:
+- Клик мышкой
+- Тап на тачскрине
+- Нажатие на физической или экранной клавиатуре
 
 ---
 
-# INP
+## INP
 
 ![](/inp-desktop-v2.svg)
 
@@ -387,39 +532,43 @@ Interaction:
 
 ---
 
-# INP
+<img src="/chrome-devtools-inp-example.png" alt="" class="mx-auto -max-h-[30rem] max-h-full max-w-full object-contain" />
 
-TODO Скрин из DevTools Performance
-
-Задача - улучшить INP. Подзадача - понять, что именно тормозит.
-
-- исследование INP (автозапуск профайлера, мониторинг событий ввода, user interactions with heavy INP, stop, после
-  остановки профайлера вырезание фрагмента трейса только с событиями, download and process profile, visualize)
-
-- Демо 1 - INP - полный цикл: запись профиля, аплоад, обработка, визуализация
+<!-- ![](/chrome-devtools-inp-example.png) -->
 
 ---
 
-# Load
+## Демо 1: INP
 
-Короткое демо - запись, визуализация
+Задача: улучшить INP. Подзадача: понять, что именно тормозит.
 
-- профилирование открытия страницы (автозапуск профайлера, остановка по событию DCL или load)
+- исследование INP (автозапуск профайлера, мониторинг событий ввода, user interactions with heavy INP, stop, после остановки профайлера — вырезание фрагмента трейса только с событиями, аплоад профиля, обработка и визуализация)
+- полное демо: запись профиля, аплоад, обработка, визуализация
+
+---
+
+## Демо 2: Load
+
+Задача: ускорить открытие страницы
+
+- профилирование открытия страницы (автозапуск профайлера ASAP, остановка по событию DCL или load)
+- аналогично для soft-навигации в SPA
+- короткое демо: запись, визуализация
 
 Примеры тормоза для демо: https://github.com/victorhuangwq/js-profiler-markers-demo/blob/main/test.html
 
 ---
 
-# Scroll
+## Демо 3: Scroll
 
-Короткое демо - запись, визуализация
+Задача: сделать скролл плавным
 
-- исследование плавности скролла (component with heavy virtual scroll, start, scroll, stop, download and process
-  profile, visualize)
+- исследование плавности скролла (компонент с тяжёлым скроллом, возможно кривая виртуализация, start, scroll, stop, аплоад профиля, обработка и визуализация)
+- короткое демо: запись, визуализация
 
 ---
 
-# Прогулка по коду
+## Прогулка по коду
 
 Весь код доступен на GitHub, ссылка в конце доклада.
 
@@ -434,20 +583,22 @@ src/profiler/profiler.ts
 
 ---
 
-# Неочевидные вещи
+## Неочевидные вещи
 
-- Чтобы запустить на странице Profiler, в HTTP-ответе должен быть включен заголовок<br>`Document-Policy: js-profiling`.
-- Опция `sampleInterval` имеет минимальное значение 10 или 16 мс в зависимости от железа. Можно всегда задавать 1,
-  тогда профайлер использует минимальное значение, потом его можно прочитать в `profiler.sampleInterval`.
-- Важно обращать внимание на `timestamp` в полученных `IProfilerSample` - сэмплы могут идти неравномерно, в том числе
-  и чаще заданного `sampleInterval`.
+<v-clicks>
 
+- Чтобы запустить на странице Profiler, в HTTP-ответе должен быть включен заголовок<br>`Document-Policy: js-profiling`. Заголовок отдаём через nginx, BFF на express, etc.
+- В Европе и США требуется явное разрешение пользователя на сбор performance-related информации (GDPR, user consent).
+- Опция `sampleInterval` имеет минимальное значение 10 или 16 мс в зависимости от железа. Можно всегда задавать 1, тогда профайлер использует минимальное значение, потом его можно прочитать в `profiler.sampleInterval`.
+- Важно обращать внимание на `timestamp` в полученных `IProfilerSample`. Сэмплы могут идти неравномерно, в том числе и чаще заданного `sampleInterval`.
+
+</v-clicks>
 
 ---
 section: true
 ---
 
-# Ссылки
+## Ссылки
 
 - https://wicg.github.io/js-self-profiling/
 - https://developer.mozilla.org/en-US/docs/Web/API/JS_Self-Profiling_API
@@ -455,9 +606,15 @@ section: true
 - https://youtu.be/Di5wA0aGe80 + https://habr.com/ru/companies/avito/articles/759072/
 - https://palette.dev/blog/chrome-devtools-not-enough
 
+<!--
+
+Это практически все ссылки. как и говорил, материалов в интернете по этой теме крайне мало.
+
+-->
+
 ---
 
-# Ссылки
+## Ссылки
 
 Демо-приложение и код обработки профилей на GitHub:
 
@@ -474,17 +631,14 @@ section: true
 
 <!--
 
-Это практически все ссылки. как и говорил, материалов в интернете по этой теме крайне мало.
-
 https://github.com/kozakdenys/qr-code-styling/tree/master?tab=readme-ov-file#qrcodestyling-instance
 
 -->
-
 ---
 section: true
 ---
 
-# Спасибо за внимание! Вопросы?
+## Спасибо за внимание! Вопросы?
 
 &nbsp;
 
