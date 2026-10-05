@@ -2,8 +2,7 @@ import {useEffect} from "react";
 import {RecordingControls, ScenarioLayout} from "../components/ScenarioChrome";
 import {SpeakerHint} from "../components/SpeakerHint";
 import {type IUseProfilerSessionOptions, useProfilerSession} from "../profiler/useProfilerSession";
-
-const SOFT_LOAD_DURATION_MS = 2500;
+import {SOFT_LOAD_DURATION_MS} from "./LoadConstants";
 
 const SOFT_LOAD_OPTIONS: IUseProfilerSessionOptions = {
     scenario: "load-soft",
@@ -16,7 +15,7 @@ const SOFT_LOAD_OPTIONS: IUseProfilerSessionOptions = {
 
 const loadScenarioContent = (
     <p style={{color: "#64748b"}}>
-        Контент «открытия страницы»: баннеры, списки, тяжёлый first paint можно нарастить позже. Сейчас важен lifecycle
+        Контент «открытия страницы»: баннеры, списки. Тяжёлый first paint можно нарастить позже. Сейчас важен lifecycle
         Profiler → auto-upload.
     </p>
 );
@@ -36,6 +35,10 @@ export function SoftLoadPage() {
                 <SpeakerHint>
                     <ol>
                         <li>
+                            При жёсткой навигации на URL или обновлении вкладки профилирование начинается при выполнении
+                            скрипта этой страницы и заканчивается на window load.
+                        </li>
+                        <li>
                             При SPA-переходе на /load профилирование начинается при монтировании компонента и длится{" "}
                             {SOFT_LOAD_DURATION_MS} мс.
                         </li>
@@ -44,7 +47,7 @@ export function SoftLoadPage() {
                     </ol>
                 </SpeakerHint>
             }
-            title="Load Scenario"
+            title="Soft Load Scenario"
         >
             {loadScenarioContent}
         </ScenarioLayout>

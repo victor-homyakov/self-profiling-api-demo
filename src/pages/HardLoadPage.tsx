@@ -4,10 +4,12 @@ import {SpeakerHint} from "../components/SpeakerHint";
 import {Profiler} from "../profiler/profiler";
 import type {TProfilerSessionStatus} from "../profiler/useProfilerSession";
 import {uploadProfilePayload} from "../profiler/upload";
-
-const HARD_LOAD_SCENARIO = "load";
-const HARD_LOAD_AUTO_STOP_MS = 15000;
-const HARD_LOAD_COMPLETE_FALLBACK_MS = 2500;
+import {
+    HARD_LOAD_AUTO_STOP_MS,
+    HARD_LOAD_COMPLETE_FALLBACK_MS,
+    HARD_LOAD_SCENARIO,
+    SOFT_LOAD_DURATION_MS,
+} from "./LoadConstants";
 
 let hardLoadCaptureActive = false;
 let hardLoadStatus: TProfilerSessionStatus = {status: "idle", error: null, fileName: null};
@@ -105,7 +107,7 @@ export function isHardLoadCaptureActive(): boolean {
 
 const loadScenarioContent = (
     <p style={{color: "#64748b"}}>
-        Контент «открытия страницы»: баннеры, списки, тяжёлый first paint можно нарастить позже. Сейчас важен lifecycle
+        Контент «открытия страницы»: баннеры, списки. Тяжёлый first paint можно нарастить позже. Сейчас важен lifecycle
         Profiler → auto-upload.
     </p>
 );
@@ -116,7 +118,7 @@ export function HardLoadPage() {
     return (
         <ScenarioLayout
             controls={<RecordingControls status={status} />}
-            description="Жёсткая навигация: Profiler стартует до React, стоп на window load или тайм-аут."
+            description="Жёсткая навигация при обновлении страницы: Profiler стартует до React, стоп на window load или тайм-аут."
             hint={
                 <SpeakerHint>
                     <ol>
@@ -124,12 +126,16 @@ export function HardLoadPage() {
                             При жёсткой навигации на URL или обновлении вкладки профилирование начинается при выполнении
                             скрипта этой страницы и заканчивается на window load.
                         </li>
+                        <li>
+                            При SPA-переходе на /load профилирование начинается при монтировании компонента и длится{" "}
+                            {SOFT_LOAD_DURATION_MS} мс.
+                        </li>
                         <li>Профиль автоматически загружается на сервер после остановки профилирования.</li>
                         <li>На talk этот Scenario — короткий обзор; live-захват опционален.</li>
                     </ol>
                 </SpeakerHint>
             }
-            title="Load Scenario"
+            title="Hard Load Scenario"
         >
             {loadScenarioContent}
         </ScenarioLayout>

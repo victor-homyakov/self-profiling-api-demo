@@ -5,7 +5,7 @@ dist
 node_modules
 /profiles/*
 !/profiles/.gitkeep
-!/profiles/flamegraph-all.sh
+!/profiles/*.sh
 *.local
 .vite-inspect
 .remote-assets
