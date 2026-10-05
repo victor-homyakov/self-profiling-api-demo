@@ -4,6 +4,8 @@ import {SpeakerHint} from "../components/SpeakerHint";
 import {HeavyScrollDemo} from "../demos/HeavyScrollDemo";
 import {type IUseProfilerSessionOptions, useProfilerSession} from "../profiler/useProfilerSession";
 
+const SCROLL_DURATION_MS = 10000;
+
 const SCROLL_OPTIONS: IUseProfilerSessionOptions = {
     scenario: "scroll",
     config: {
@@ -11,7 +13,7 @@ const SCROLL_OPTIONS: IUseProfilerSessionOptions = {
         eventNames: ["scroll", "wheel", "touchmove"],
         stripSamplesWithoutEvents: false,
     },
-    autoStopAfterMs: 20000,
+    autoStopAfterMs: SCROLL_DURATION_MS,
 };
 
 export function ScrollPage() {
@@ -28,7 +30,7 @@ export function ScrollPage() {
     return (
         <ScenarioLayout
             controls={<RecordingControls onStart={start} onStop={stopAndUpload} status={status} />}
-            description="Тяжёлый скролл / виртуальный список. Автостарт записи на mount; стоп по autoStopAfterMs или вручную; автоматический аплоад профиля."
+            description={`Тяжёлый скролл / виртуальный список. Автостарт записи на mount; стоп через autoStopAfterMs (${SCROLL_DURATION_MS} мс) или вручную; автоматический аплоад профиля.`}
             hint={
                 <SpeakerHint>
                     <ol>

@@ -1,4 +1,4 @@
-# Generate SVGs from folded stackcollapse files in this directory.
+# Generate SVGs from folded stackcollapse files in this directory
 # Prefer: npm run process-profile -- fold profiles
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 PL="$ROOT/tools/FlameGraph/flamegraph.pl"
