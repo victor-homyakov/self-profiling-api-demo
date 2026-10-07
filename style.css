@@ -1,0 +1,27 @@
+#app {
+    --purple: hsl(265, 70%, 90%); /* ~#e4d4fb, contrast ~10:1 on #282a36 */
+    --slidev-code-font-size: 16px;
+    --slidev-code-line-height: 24px;
+}
+
+/* Body copy. Headings keep theme sizes. 1.1rem → 1.3rem. */
+#app .slidev-layout {
+    font-size: 1.3rem;
+    line-height: 1.45;
+}
+
+#app .slidev-layout p {
+    line-height: 1.45;
+}
+
+/* Undo fixed text-sm / text-xs so these track the body size. */
+#app .slidev-layout blockquote,
+#app .slidev-layout kbd {
+    font-size: 0.9em;
+}
+
+/* Theme draws literal backticks around inline code. content: none drops the pseudo-element, so it takes no width. */
+#app :not(pre) > code::before,
+#app :not(pre) > code::after {
+    content: none;
+}
