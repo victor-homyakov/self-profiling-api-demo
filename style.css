@@ -1,27 +1,551 @@
-#app {
-    --purple: hsl(265, 70%, 90%); /* ~#e4d4fb, contrast ~10:1 on #282a36 */
+:root {
+    --bg: #101114;
+    --card: #1c1f26;
+    --ink: #f3efe6;
+    --muted: #9c978e;
+    --line: #2a2e36;
+    --accent: #e8a317;
+    --sand: #e4d3b0;
+    --cream: #f3efe6;
+    --good: #7dba6a;
+    --bad: #d4655a;
+
+    --slidev-theme-primary: #e8a317;
+    --slidev-slide-container-background: #101114;
+    --slidev-code-background: #181b22;
+    --slidev-code-foreground: #f3efe6;
     --slidev-code-font-size: 16px;
     --slidev-code-line-height: 24px;
+    --slidev-code-padding: 12px 14px;
+    --slidev-code-radius: 10px;
 }
 
-/* Body copy. Headings keep theme sizes. 1.1rem → 1.3rem. */
+html.dark,
+html.dark body,
+html.dark #app,
+html.dark #page-root {
+    background-color: var(--bg) !important;
+    color: var(--ink);
+}
+
 #app .slidev-layout {
+    background-color: var(--bg);
+    color: var(--ink);
     font-size: 1.3rem;
     line-height: 1.45;
 }
 
-#app .slidev-layout p {
-    line-height: 1.45;
+#app .slidev-layout h1,
+#app .slidev-layout h2,
+#app .slidev-layout h3 {
+    color: var(--ink);
+    font-weight: 600;
+    letter-spacing: -0.025em;
+    line-height: 1.15;
 }
 
-/* Undo fixed text-sm / text-xs so these track the body size. */
+#app .slidev-layout h2 {
+    font-size: 1.85rem;
+    margin-top: 0;
+    margin-bottom: 0.7rem;
+}
+
+#app .slidev-layout p {
+    line-height: 1.45;
+    margin-top: 0.45rem;
+    margin-bottom: 0.45rem;
+}
+
 #app .slidev-layout blockquote,
 #app .slidev-layout kbd {
     font-size: 0.9em;
 }
 
-/* Theme draws literal backticks around inline code. content: none drops the pseudo-element, so it takes no width. */
+#app .slidev-layout ul {
+    list-style: none;
+    padding-left: 0;
+    margin-left: 0;
+}
+
+#app .slidev-layout li {
+    position: relative;
+    margin-left: 0 !important;
+    padding-left: 1.15rem;
+    line-height: 1.4;
+    margin-bottom: 0.35rem;
+}
+
+#app .slidev-layout ul > li::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0.68em;
+    width: 0.55rem;
+    height: 2px;
+    border-radius: 1px;
+    background: var(--muted);
+}
+
 #app :not(pre) > code::before,
 #app :not(pre) > code::after {
     content: none;
+}
+
+#app .slidev-layout :not(pre) > code {
+    background: transparent;
+    color: var(--sand);
+    font-size: 0.92em;
+    padding: 0;
+    border: none;
+}
+
+html.dark .slidev-code.shiki {
+    background-color: var(--slidev-code-background) !important;
+    border: 1px solid var(--line);
+}
+
+#app .slidev-layout a {
+    border-bottom-color: var(--line);
+}
+
+/* Cover */
+
+#app .slidev-layout.cover {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    padding-top: 5.25rem;
+    padding-bottom: 2.6rem;
+}
+
+#app .slidev-layout.cover > .my-auto {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
+#app .slidev-layout.cover h1 {
+    margin: 0;
+    font-size: 4.5rem;
+    font-weight: 700;
+    letter-spacing: -0.04em;
+    line-height: 0.98;
+}
+
+#app .slidev-layout.cover h1::before {
+    content: "";
+    display: block;
+    width: 3rem;
+    height: 4px;
+    margin-bottom: 1.15rem;
+    border-radius: 2px;
+    background: var(--accent);
+}
+
+#app .slidev-layout.cover h2 {
+    margin: 0.55rem 0 0;
+    font-size: 1.65rem;
+    font-weight: 400;
+    letter-spacing: -0.015em;
+    line-height: 1.3;
+    color: var(--muted);
+}
+
+#app .slidev-layout.cover h2 + h2 {
+    margin-top: auto;
+    padding-top: 2rem;
+    font-size: 1.3rem;
+    font-weight: 500;
+    color: var(--ink);
+}
+
+/* Pros / cons */
+
+#app .slidev-layout.split.two-cols-header {
+    column-gap: 1.35rem;
+    row-gap: 0.35rem;
+}
+
+#app .slidev-layout.split .col-left,
+#app .slidev-layout.split .col-right {
+    align-self: stretch;
+    height: 100%;
+    border: 1px solid transparent;
+    border-radius: 12px;
+    padding: 0.85rem 1.05rem 0.35rem;
+    background: transparent;
+}
+
+#app .slidev-layout.split .col-left:has(.slidev-vclick-target:not(.slidev-vclick-hidden)),
+#app .slidev-layout.split .col-right:has(.slidev-vclick-target:not(.slidev-vclick-hidden)) {
+    background: var(--card);
+    border-color: var(--line);
+}
+
+#app .slidev-layout.minus-left .col-left,
+#app .slidev-layout.plus-left .col-right {
+    color: var(--muted);
+}
+
+#app .slidev-layout.minus-left .col-right:has(.slidev-vclick-target:not(.slidev-vclick-hidden)),
+#app .slidev-layout.plus-left .col-left:has(.slidev-vclick-target:not(.slidev-vclick-hidden)) {
+    border-color: transparent;
+    box-shadow: inset 3px 0 0 var(--accent);
+}
+
+/* Photo sequence */
+
+#app .slidev-layout.photo {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+#app .slidev-layout.photo::before {
+    content: "Офис";
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--muted);
+}
+
+#app .slidev-layout.photo.field::before {
+    content: "Реальный мир";
+}
+
+#app .slidev-layout.photo h2 {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+#app .slidev-layout.photo img {
+    flex: 1 1 auto;
+    min-height: 0;
+    width: auto !important;
+    max-width: 100%;
+    max-height: 23rem !important;
+    height: auto;
+    margin: 0.65rem auto 0;
+    object-fit: contain;
+    border-radius: 8px;
+}
+
+#app .slidev-layout.photo p {
+    flex: 0 0 auto;
+    margin: 0.7rem 0 0;
+    text-align: center;
+    font-size: 1.85rem;
+    font-weight: 600;
+    letter-spacing: -0.03em;
+    line-height: 1.2;
+}
+
+/* Step lists */
+
+#app .slidev-layout.steps li {
+    margin-bottom: 0.28rem;
+    line-height: 1.35;
+}
+
+#app .slidev-layout.steps ul {
+    margin-top: 0.35rem;
+}
+
+/* Diagram and full-bleed frames */
+
+#app .slidev-layout.stage {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+#app .slidev-layout.stage .stacks {
+    margin-top: auto;
+    margin-bottom: auto;
+    align-self: center;
+}
+
+#app .slidev-layout.frame {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+}
+
+#app .slidev-layout.frame h2 {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--muted);
+    margin-bottom: 0.3rem;
+}
+
+#app .slidev-layout.frame img {
+    flex: 1 1 auto;
+    min-height: 0;
+    width: 100%;
+    max-width: 100%;
+    max-height: none !important;
+    object-fit: contain;
+    object-position: center;
+}
+
+#app .slidev-layout.frame p:has(img) {
+    flex: 1 1 auto;
+    min-height: 0;
+    display: flex;
+    margin: 0;
+}
+
+/* Production findings */
+
+#app .slidev-layout.evidence {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+#app .slidev-layout.evidence h2 {
+    font-size: 1.35rem;
+    line-height: 1.2;
+    margin-bottom: 0.35rem;
+}
+
+#app .slidev-layout.evidence li {
+    margin-bottom: 0.12rem;
+    font-size: 0.92em;
+    line-height: 1.32;
+}
+
+#app .slidev-layout.evidence p:has(img) {
+    flex: 0 0 auto;
+    margin: 0.85rem 0 0;
+}
+
+#app .slidev-layout.evidence p:has(img) img {
+    display: block;
+    width: 100%;
+    height: auto;
+    max-height: none;
+    object-fit: contain;
+    object-position: left center;
+}
+
+/* Comparison profiles */
+
+#app .slidev-layout.compare {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+}
+
+#app .slidev-layout.compare h2 {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--muted);
+    margin-bottom: 0.35rem;
+}
+
+#app .slidev-layout.compare .overflow-y-auto {
+    flex: 1 1 auto;
+    min-height: 0;
+    height: auto !important;
+    margin: 0;
+}
+
+/* INP scale */
+
+#app .slidev-layout.scale img {
+    display: block;
+    max-height: 11.5rem;
+    margin: 0.15rem 0 0.2rem;
+}
+
+#app .slidev-layout.scale ul {
+    display: grid;
+    grid-template-columns: 1fr 1.4fr 1fr;
+    gap: 0.55rem;
+    margin-top: 0.35rem;
+}
+
+#app .slidev-layout.scale li {
+    margin: 0;
+    padding: 0.75rem 0.85rem 0.8rem;
+    background: var(--card);
+    border-radius: 10px;
+    border-top: 4px solid var(--line);
+    line-height: 1.3;
+}
+
+#app .slidev-layout.scale li::before {
+    display: none;
+}
+
+#app .slidev-layout.scale li:nth-child(1) {
+    border-top-color: var(--good);
+}
+
+#app .slidev-layout.scale li:nth-child(2) {
+    border-top-color: var(--accent);
+}
+
+#app .slidev-layout.scale li:nth-child(3) {
+    border-top-color: var(--bad);
+}
+
+/* Gotchas */
+
+#app .slidev-layout.cards ul {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.7rem;
+    margin-top: 0.4rem;
+}
+
+#app .slidev-layout.cards li {
+    align-self: stretch;
+    height: 100%;
+    margin: 0;
+    padding: 0.85rem 0.95rem 0.9rem 1rem;
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    font-size: 0.92rem;
+    line-height: 1.35;
+}
+
+#app .slidev-layout.cards li::before {
+    display: none;
+}
+
+#app .slidev-layout.cards li:first-child {
+    box-shadow: inset 3px 0 0 var(--accent);
+}
+
+/* Punch line and three problem types */
+
+#app .slidev-layout.punch li:last-child {
+    margin-top: 1.15rem;
+    font-size: 2rem;
+    font-weight: 600;
+    letter-spacing: -0.03em;
+    line-height: 1.2;
+}
+
+#app .slidev-layout.punch li:last-child::before {
+    width: 1.25rem;
+    height: 3px;
+    top: 0.62em;
+    background: var(--accent);
+}
+
+#app .slidev-layout.trio ul {
+    display: grid;
+    gap: 0.65rem;
+    margin-top: 1rem;
+}
+
+#app .slidev-layout.trio li {
+    margin: 0;
+    padding: 0.85rem 1.1rem;
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    font-size: 1.45rem;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    line-height: 1.25;
+}
+
+#app .slidev-layout.trio li::before {
+    display: none;
+}
+
+/* Talk list: year, venue, and title on one grid */
+
+#app .slidev-layout .talks-scroll li {
+    display: grid;
+    grid-template-columns: 4.6ch 11.5ch minmax(0, 1fr);
+    column-gap: 0.9rem;
+    align-items: baseline;
+    padding-left: 0;
+    margin-bottom: 0.55rem;
+}
+
+#app .slidev-layout .talks-scroll li::before {
+    display: none;
+}
+
+#app .slidev-layout .talks-scroll .when {
+    color: var(--muted);
+    font-family: var(--slidev-code-font-family, ui-monospace, monospace);
+    font-size: 0.86em;
+    font-variant-numeric: tabular-nums;
+}
+
+#app .slidev-layout .talks-scroll .venue {
+    color: var(--sand);
+    font-weight: 600;
+}
+
+#app .slidev-layout .talks-scroll .talk {
+    color: var(--ink);
+}
+
+/* Links */
+
+#app .slidev-layout.links li {
+    font-family: var(--slidev-code-font-family, ui-monospace, monospace);
+    font-size: 0.82rem;
+    line-height: 1.45;
+    margin-bottom: 0.45rem;
+}
+
+/* Closing QR. Same box on both slides so a phone aimed at one still hits the next. */
+
+#app .slidev-layout.end,
+#app .slidev-layout.finale {
+    position: relative;
+}
+
+#app .slidev-layout.finale {
+    display: flex;
+    align-items: center;
+}
+
+#app .slidev-layout.finale h2 {
+    max-width: 11ch;
+    margin: 0;
+    font-size: 3.15rem;
+    line-height: 1.08;
+    letter-spacing: -0.035em;
+}
+
+#app .slidev-layout.finale p {
+    display: none;
+}
+
+#app .slidev-layout.end .qr,
+#app .slidev-layout.finale .qr {
+    position: absolute;
+    top: 50%;
+    right: 3.5rem;
+    width: 280px;
+    height: 280px;
+    margin: 0;
+    transform: translateY(-50%);
 }
