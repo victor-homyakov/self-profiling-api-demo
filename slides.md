@@ -1,6 +1,19 @@
 ---
 duration: 42min
-theme: dracula
+theme: default
+colorSchema: dark
+fonts:
+  sans: Manrope
+  serif: Manrope
+  mono: JetBrains Mono
+  provider: google
+  italic: false
+  weights:
+    - 400
+    - 500
+    - 600
+    - 700
+class: cover
 addons:
   - slidev-addon-qrcode
   - slidev-addon-second-screen
@@ -9,8 +22,6 @@ addons:
 
 # Self-Profiling API
 ## как узнать, почему у пользователя всё тормозит
-
-<br /><br /><br />
 
 ## Виктор Хомяков
 
@@ -62,16 +73,16 @@ section:
 
 <div class="talks-scroll">
 
-- 2018 Я.Субботник "Производительность JS: чтобы улучшить, надо измерить"
-- 2019 MinskJS "Профилирование JS: увидеть самое важное и не утонуть в море чисел"
-- 2021 Я.Субботник "Код на React и TypeScript, который работает быстро"
-- 2021 Я.Субботник "Приёмы оптимизации кода по скорости"
-- 2021 Habr "Приёмы ускорения кода на JS и других языках"
-- 2021 GDG Minsk "Память и её утечки в Chrome и Node.js. Нестандартные способы оптимизации памяти в Node.js."
-- 2022 HolyJS "Планировщик задач: не замораживаем вкладку при открытии страницы"
-- 2023 HolyJS "Написание бенчмарков и performance-тестов для кода на JS/TS"
-- 2024 HolyJS "Ускорение приложений на Node: когда стандартного профайлера недостаточно"
-- 2026 HolyJS "Как находить утечки памяти: практический воркшоп в Chrome DevTools"
+- <span class="when">2018</span><span class="venue">Я.Субботник</span><span class="talk">Производительность JS: чтобы улучшить, надо измерить</span>
+- <span class="when">2019</span><span class="venue">MinskJS</span><span class="talk">Профилирование JS: увидеть самое важное и не утонуть в море чисел</span>
+- <span class="when">2021</span><span class="venue">Я.Субботник</span><span class="talk">Код на React и TypeScript, который работает быстро</span>
+- <span class="when">2021</span><span class="venue">Я.Субботник</span><span class="talk">Приёмы оптимизации кода по скорости</span>
+- <span class="when">2021</span><span class="venue">Habr</span><span class="talk">Приёмы ускорения кода на JS и других языках</span>
+- <span class="when">2021</span><span class="venue">GDG Minsk</span><span class="talk">Память и её утечки в Chrome и Node.js. Нестандартные способы оптимизации памяти в Node.js.</span>
+- <span class="when">2022</span><span class="venue">HolyJS</span><span class="talk">Планировщик задач: не замораживаем вкладку при открытии страницы</span>
+- <span class="when">2023</span><span class="venue">HolyJS</span><span class="talk">Написание бенчмарков и performance-тестов для кода на JS/TS</span>
+- <span class="when">2024</span><span class="venue">HolyJS</span><span class="talk">Ускорение приложений на Node: когда стандартного профайлера недостаточно</span>
+- <span class="when">2026</span><span class="venue">HolyJS</span><span class="talk">Как находить утечки памяти: практический воркшоп в Chrome DevTools</span>
 
 </div>
 
@@ -99,7 +110,7 @@ section:
 
   50%,
   58% {
-    transform: translateY(-237px);
+    transform: translateY(-190px);
   }
 
   100% {
@@ -128,22 +139,29 @@ section:
 - сэмплирующий
 
 ---
+layout: two-cols-header
+layoutClass: split minus-left
+---
 
 ## Инструментирующий профайлер
 
-<div class="flex items-center gap-3 mt-3">
+<div class="flex items-center gap-3 mt-1">
   <img src="/internet-explorer.svg" alt="" class="h-12 w-12" />
   <img v-click src="/istanbul.png" alt="Istanbul" class="h-12 w-12" />
 </div>
 
+::left::
+
 <v-click>
 
 Минусы:
-- замедляет старт кода (нужно всё инструментировать)
+- замедляет старт кода (нужно всё инструментировать)
 - замедляет выполнение мелких функций
-- реализация или медленная или сложная<br />(ленивое инструментирование, динамическое деинструментирование горячего кода)
+- реализация или медленная или сложная (ленивое инструментирование, динамическое деинструментирование горячего кода)
 
 </v-click>
+
+::right::
 
 <v-click>
 
@@ -160,10 +178,15 @@ section:
 -->
 
 ---
+layout: two-cols-header
+layoutClass: split plus-left
+---
 
 ## Сэмплирующий профайлер
 
 Все остальные браузеры и среды выполнения JS
+
+::left::
 
 <v-click>
 
@@ -174,10 +197,12 @@ section:
 
 </v-click>
 
+::right::
+
 <v-click>
 
 Минусы:
-- мелкая редкая функция может не попасть в сэмплы
+- мелкая редкая функция может не попасть в сэмплы
 - периодическая функция может интерферировать с сэмплами (пропасть или усилиться)
 - нет числа вызовов (не понимаем сложность алгоритма)
 
@@ -195,12 +220,13 @@ section:
 ---
 section:
   duration: 2m
+class: punch
 ---
 
 ## Проблема воспроизведения performance-багов
 
 - Пользователи: жалуются на тормоза
-- Google Search Console говорит: есть тормоза
+- Google Search Console: говорит, что есть тормоза
 - "У меня всё работает" (c)
 
 <!--
@@ -209,6 +235,8 @@ section:
 
 -->
 
+---
+class: photo office
 ---
 
 ## Проблема воспроизведения performance-багов
@@ -224,6 +252,8 @@ section:
 -->
 
 ---
+class: photo office
+---
 
 ## Проблема воспроизведения performance-багов
 
@@ -231,6 +261,8 @@ section:
 
 <p class="text-center">Мощные MacBook и iPhone</p>
 
+---
+class: photo office
 ---
 
 ## Проблема воспроизведения performance-багов
@@ -240,6 +272,8 @@ section:
 <p class="text-center">Постоянно заряжаются от розетки</p>
 
 ---
+class: photo field
+---
 
 ## Проблема воспроизведения performance-багов
 
@@ -247,6 +281,8 @@ section:
 
 <p class="text-center">Бюджетные ноутбуки</p>
 
+---
+class: photo field
 ---
 
 ## Проблема воспроизведения performance-багов
@@ -256,6 +292,8 @@ section:
 <p class="text-center">Дешёвые телефоны</p>
 
 ---
+class: photo field
+---
 
 ## Проблема воспроизведения performance-багов
 
@@ -264,6 +302,8 @@ section:
 <p class="text-center">Режим экономии батареи</p>
 
 ---
+class: photo field
+---
 
 ## Проблема воспроизведения performance-багов
 
@@ -271,6 +311,8 @@ section:
 
 <p class="text-center">Плохая сеть</p>
 
+---
+class: photo field
 ---
 
 ## Проблема воспроизведения performance-багов
@@ -295,6 +337,8 @@ section:
 - режим экономии заряда батареи
 - многоядерные CPU, но код выполняется на энергоэффективных ядрах
 
+---
+class: trio
 ---
 
 ## Проблема воспроизведения performance-багов
@@ -343,6 +387,8 @@ const profile = await profiler.stop();
 </v-clicks>
 
 ---
+class: steps
+---
 
 ## Как реализовать сбор данных
 
@@ -358,6 +404,8 @@ const profile = await profiler.stop();
 
 </v-clicks>
 
+---
+class: steps
 ---
 
 ## Как реализовать обработку данных
@@ -379,6 +427,8 @@ const profile = await profiler.stop();
 -->
 
 ---
+class: steps
+---
 
 ## Как реализовать обработку данных
 
@@ -391,6 +441,8 @@ const profile = await profiler.stop();
 
 </v-clicks>
 
+---
+class: stage
 ---
 
 ## Как реализовать обработку данных
@@ -419,8 +471,9 @@ const profile = await profiler.stop();
   display: grid;
   grid-template-columns: max-content 1fr;
   align-items: end;
-  gap: 1.2rem 2rem;
-  margin-top: 1.5rem;
+  gap: 1.2rem 2.4rem;
+  width: max-content;
+  margin: 1.5rem auto 0;
 }
 
 .stacks .label {
@@ -459,7 +512,7 @@ const profile = await profiler.stop();
   display: flex;
   flex-direction: column-reverse;
   gap: 2px;
-  width: calc(var(--ms) * 0.5rem);
+  width: calc(var(--ms) * 0.72rem);
   font-family: var(--slidev-code-font-family, monospace);
 }
 
@@ -469,23 +522,25 @@ const profile = await profiler.stop();
   justify-content: center;
   height: 1.5rem;
   border-radius: 4px;
-  color: #282a36;
+  color: #101114;
   font-weight: 700;
 }
 
 .fn-a {
-  background: #ff79c6;
+  background: #e8a317;
 }
 
 .fn-b {
-  background: #8be9fd;
+  background: #e4d3b0;
 }
 
 .fn-c {
-  background: #50fa7b;
+  background: #f3efe6;
 }
 </style>
 
+---
+class: steps
 ---
 
 ## Как реализовать обработку данных
@@ -493,7 +548,7 @@ const profile = await profiler.stop();
 <v-clicks>
 
 - Агрегированный профиль конвертируем в формат stackcollapse
-- Отдаём программе FlameGraph Брендана Грегга https://github.com/brendangregg/FlameGraph
+- Отдаём программе FlameGraph Брендана Грегга
 - Она генерирует интерактивный SVG с флеймграфом
 - (Демо) Открываем SVG в браузере и анализируем
 
@@ -520,8 +575,8 @@ https://web.dev/articles/inp
 - Нажатие на физической или экранной клавиатуре
 
 ---
-
-## INP
+class: scale
+---
 
 ![](/inp-desktop-v2.svg)
 
@@ -532,11 +587,15 @@ https://web.dev/articles/inp
 - \> 500 мс — плохая отзывчивость
 
 ---
+class: frame
+---
 
-<img src="/chrome-devtools-inp-example.png" alt="" class="mx-auto -max-h-[30rem] max-h-full max-w-full object-contain" />
+<img src="/chrome-devtools-inp-example.png" alt="" class="mx-auto max-h-full max-w-full object-contain" />
 
 <!-- ![](/chrome-devtools-inp-example.png) -->
 
+---
+class: steps
 ---
 
 ## Демо 1: INP
@@ -555,11 +614,15 @@ https://web.dev/articles/inp
 -->
 
 ---
+class: frame
+---
 
 ## Что нашёл в проде: `window.open` при клике по ссылке
 
 ![Profile](/case-1-open/profile-folded.svg)
 
+---
+class: steps
 ---
 
 ## Демо 2: Load
@@ -572,8 +635,10 @@ https://web.dev/articles/inp
 - короткое демо
 
 ---
+class: evidence
+---
 
-## Что нашёл в проде: хук логирования показа карточки
+## Что нашёл в проде: логирование показа карточки
 
 <v-clicks>
 
@@ -590,14 +655,15 @@ https://web.dev/articles/inp
 
 <!--
 
-В реальном проде много самых разных параметров, в отличие от тестового окружения.
-Много карточек -> много логов -> долгая фильтрация.
+В реальном проде много самых разных параметров, в отличие от тестового окружения. Много карточек -> много логов -> долгая фильтрация.
 
 -->
 
 ---
+class: evidence
+---
 
-## Что нашёл в проде: хук получения типа страницы
+## Что нашёл в проде: получение типа страницы
 
 <v-clicks>
 
@@ -620,6 +686,8 @@ https://web.dev/articles/inp
 -->
 
 ---
+class: steps
+---
 
 ## Демо 3: Scroll
 
@@ -632,6 +700,7 @@ https://web.dev/articles/inp
 ---
 section:
   duration: 3m
+class: compare
 ---
 
 ## Сравнение: исходный профиль
@@ -641,6 +710,8 @@ section:
 </div>
 
 ---
+class: compare
+---
 
 ## Сравнение: первая часть оптимизаций
 
@@ -649,6 +720,8 @@ section:
 </div>
 
 ---
+class: compare
+---
 
 ## Сравнение: вторая часть оптимизаций + React 19
 
@@ -656,6 +729,8 @@ section:
   <img src="/case-4-comparison/desktop-3.svg" alt="Profile" class="w-full" />
 </div>
 
+---
+class: cards
 ---
 
 <!-- ## Прогулка по коду
@@ -666,7 +741,6 @@ src/profiler/profiler.ts
 
 - Я добавил логирование событий клавиатуры, мышки, тача. По аналогии можно добавлять и другие события.
 - Профиль сжимается, gzip поддерживается в браузерном CompressionStream.
-- URL ресурсов могут быть очень длинными из-за параметров. Я отрезаю все параметры.
 - Для сокращения объёма данных можно отрезать сэмплы до первого и после последнего события.
 
 Формат данных: src/profiler/types.ts -->
@@ -677,7 +751,9 @@ src/profiler/profiler.ts
 
 - Чтобы запустить на странице Profiler, в HTTP-ответе должен быть заголовок `Document-Policy: js-profiling`. Заголовок отдаём через nginx или express.
 - В некоторых странах требуется разрешение пользователя на сбор performance-related информации (GDPR, user consent).
-- Опция `sampleInterval` имеет минимальное значение 10 или 16 мс в зависимости от железа. Можно задавать 1, тогда профайлер использует минимальное значение, потом его можно прочитать в `profiler.sampleInterval`.
+- URL ресурсов могут быть очень длинными из-за параметров. Я отрезаю все параметры. JSON уменьшается, профили лучше агрегируются.
+- Я сам логирую события ввода и добавляю в JSON профиля. Google планирует добавить маркеры script/gc/style/layout/paint.
+- Опция `sampleInterval` имеет минимальное значение 10 или 16 мс в зависимости от железа. Можно задать 1, тогда профайлер использует минимальное значение, потом его можно узнать в `profiler.sampleInterval`.
 - Важно обращать внимание на `timestamp` в полученных `IProfilerSample`. Сэмплы могут идти неравномерно, в том числе чаще заданного `sampleInterval`.
 
 </v-clicks>
@@ -685,6 +761,7 @@ src/profiler/profiler.ts
 ---
 section:
   duration: 30s
+class: links
 ---
 
 ## Ссылки
@@ -694,6 +771,7 @@ section:
 - https://calendar.perfplanet.com/2021/js-self-profiling-api-in-practice/
 - https://youtu.be/Di5wA0aGe80 + https://habr.com/ru/companies/avito/articles/759072/
 - https://palette.dev/blog/chrome-devtools-not-enough
+- https://github.com/brendangregg/FlameGraph
 
 <!--
 
@@ -702,20 +780,23 @@ section:
 -->
 
 ---
+class: end
+---
 
 ## Ссылки
 
 Демо-приложение и код обработки профилей на GitHub:
 
 <QRCode
-    :width="300"
-    :height="300"
+    class="qr"
+    :width="280"
+    :height="280"
     type="svg"
     data="https://github.com/victor-homyakov/self-profiling-api-demo"
-    :margin="10"
-    :imageOptions="{ margin: 10 }"
-    :backgroundOptions="{ color: '#fff' }"
-    :dotsOptions="{ color: 'black' }"
+    :margin="8"
+    :imageOptions="{ margin: 8 }"
+    :backgroundOptions="{ color: '#101114' }"
+    :dotsOptions="{ color: '#f3efe6' }"
 />
 
 <!--
@@ -725,18 +806,21 @@ https://github.com/kozakdenys/qr-code-styling/tree/master?tab=readme-ov-file#qrc
 -->
 
 ---
+class: finale
+---
 
 ## Спасибо за внимание! Вопросы?
 
 &nbsp;
 
 <QRCode
-    :width="300"
-    :height="300"
+    class="qr"
+    :width="280"
+    :height="280"
     type="svg"
     data="https://github.com/victor-homyakov/self-profiling-api-demo"
-    :margin="10"
-    :imageOptions="{ margin: 10 }"
-    :backgroundOptions="{ color: '#fff' }"
-    :dotsOptions="{ color: 'black' }"
+    :margin="8"
+    :imageOptions="{ margin: 8 }"
+    :backgroundOptions="{ color: '#101114' }"
+    :dotsOptions="{ color: '#f3efe6' }"
 />
