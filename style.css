@@ -193,8 +193,19 @@ html.dark .slidev-code.shiki {
 
 #app .slidev-layout.minus-left .col-right:has(.slidev-vclick-target:not(.slidev-vclick-hidden)),
 #app .slidev-layout.plus-left .col-left:has(.slidev-vclick-target:not(.slidev-vclick-hidden)) {
-    border-color: transparent;
-    box-shadow: inset 3px 0 0 var(--accent);
+    position: relative;
+    overflow: hidden;
+}
+
+#app .slidev-layout.minus-left .col-right:has(.slidev-vclick-target:not(.slidev-vclick-hidden))::after,
+#app .slidev-layout.plus-left .col-left:has(.slidev-vclick-target:not(.slidev-vclick-hidden))::after {
+    content: "";
+    position: absolute;
+    top: -1px;
+    bottom: -1px;
+    left: -1px;
+    width: 4px;
+    background: var(--accent);
 }
 
 /* Photo sequence */
@@ -433,7 +444,18 @@ html.dark .slidev-code.shiki {
 }
 
 #app .slidev-layout.cards li:first-child {
-    box-shadow: inset 3px 0 0 var(--accent);
+    position: relative;
+    overflow: hidden;
+}
+
+#app .slidev-layout.cards li:first-child::after {
+    content: "";
+    position: absolute;
+    top: -1px;
+    bottom: -1px;
+    left: -1px;
+    width: 4px;
+    background: var(--accent);
 }
 
 /* Punch line and three problem types */
