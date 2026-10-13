@@ -37,7 +37,7 @@ addons:
 
 ---
 section:
-  duration: 30s
+  duration: 35s
 ---
 
 ## О себе
@@ -355,7 +355,7 @@ class: trio
 
 ---
 section:
-  duration: 15m
+  duration: 13m
 ---
 
 ## Что такое Self-Profiling API и как оно поможет
@@ -385,6 +385,12 @@ const profile = await profiler.stop();
 - ИИ не поможет: не на чем было обучаться
 
 </v-clicks>
+
+<!--
+
+Упомяну ИИ в первый и предпоследний раз: ИИ нам не поможет
+
+-->
 
 ---
 class: steps
@@ -421,6 +427,8 @@ class: steps
 </v-clicks>
 
 <!-- 
+
+Отбираем топ-5 самых интересных. Например, где пользователь больше всего кликал мышкой или где очень долго всё грузилось.
 
 Переключиться на Perfetto и показать пример трейса
 
@@ -554,15 +562,9 @@ class: steps
 
 </v-clicks>
 
-<!-- 
-
-Переключиться на SVG и показать пример флеймграфа
-
--->
-
 ---
 section:
-  duration: 19m
+  duration: 20m
 ---
 
 ## INP (Interaction to Next Paint)
@@ -592,7 +594,13 @@ class: frame
 
 <img src="/chrome-devtools-inp-example.png" alt="" class="mx-auto max-h-full max-w-full object-contain" />
 
-<!-- ![](/chrome-devtools-inp-example.png) -->
+<!--
+
+- значение
+- список внизу
+- связь с продом
+
+-->
 
 ---
 class: steps
@@ -699,7 +707,7 @@ class: steps
 
 ---
 section:
-  duration: 3m
+  duration: 4m
 class: compare
 ---
 
@@ -760,7 +768,7 @@ src/profiler/profiler.ts
 
 ---
 section:
-  duration: 30s
+  duration: 35s
 class: links
 ---
 
