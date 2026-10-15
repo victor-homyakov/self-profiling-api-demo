@@ -42,33 +42,6 @@ section:
 
 ## О себе
 
-<div class="mt-6 flex flex-col gap-5 text-3xl">
-  <div class="flex items-center gap-4">
-    <img src="/targetprocess.png" alt="" class="h-16 w-16 rounded-full" />
-    Targetprocess
-  </div>
-  <div class="flex items-center gap-4">
-    <img src="/yandex-search.png" alt="" class="h-16 w-16" />
-    Яндекс Поиск
-  </div>
-  <div class="flex items-center gap-4">
-    <img src="/yandex-games.png" alt="" class="h-16 w-16 rounded-2xl" />
-    Яндекс Игры
-  </div>
-</div>
-
-<!--
-
-Рассказать, что делаю.
-Участвовал и участвую в проектах, в которых важна скорость работы у пользователя.
-Профилирование и поиск утечек памяти в браузере и в Node.js.
-
--->
-
----
-
-## О себе
-
 Это продолжение серии докладов о производительности и профилировании
 
 <div class="talks-scroll">
@@ -86,44 +59,13 @@ section:
 
 </div>
 
-<style>
-.talks-scroll {
-  height: 368px;
-  margin-top: 0.35rem;
-  overflow: hidden;
-  --fade: 1.35rem;
-  -webkit-mask-image: linear-gradient(to bottom, transparent, #000 var(--fade), #000 calc(100% - var(--fade)), transparent);
-  mask-image: linear-gradient(to bottom, transparent, #000 var(--fade), #000 calc(100% - var(--fade)), transparent);
-}
+<!--
 
-.talks-scroll ul {
-  margin: 0;
-  padding-block: var(--fade);
-  animation: talks-yoyo 22s ease-in-out infinite;
-}
+Рассказать, что делаю.
+Участвовал и участвую в проектах, в которых важна скорость работы у пользователя.
+Профилирование и поиск утечек памяти в браузере и в Node.js.
 
-@keyframes talks-yoyo {
-  0%,
-  8% {
-    transform: translateY(0);
-  }
-
-  50%,
-  58% {
-    transform: translateY(-190px);
-  }
-
-  100% {
-    transform: translateY(0);
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .talks-scroll ul {
-    animation: none;
-  }
-}
-</style>
+-->
 
 ---
 section:
@@ -166,7 +108,8 @@ layoutClass: split minus-left
 <v-click>
 
 Плюсы:
-- точное число вызовов, сложность алгоритма
+- точное число вызовов
+- сложность алгоритма
 - замеры работы с DOM (`getBoundingClientRect` etc.)
 
 </v-click>
@@ -323,7 +266,9 @@ class: photo field
 
 <!--
 
-Из неожиданного: WB/Ozon - намного удобнее добавлять товары в корзину, чем использовать "Избранное", закладки и т.п.
+Из неожиданного:
+- странные браузерные расширения
+- WB/Ozon - намного удобнее добавлять товары в корзину, чем использовать "Избранное", закладки и т.п.
 
 -->
 
@@ -473,79 +418,6 @@ class: stage
     <div class="item"><div class="stack" style="--ms: 20"><span class="fn-a">a</span><span class="fn-b">b</span><span class="fn-c">c</span></div><b>20 ms</b></div>
   </div>
 </div>
-
-<style>
-.stacks {
-  display: grid;
-  grid-template-columns: max-content 1fr;
-  align-items: end;
-  gap: 1.2rem 2.4rem;
-  width: max-content;
-  margin: 1.5rem auto 0;
-}
-
-.stacks .label {
-  font-size: 0.8rem;
-  line-height: 1.2;
-  opacity: 0.8;
-  padding-bottom: 1.6rem;
-}
-
-.stacks .row {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: flex-end;
-  gap: 1rem 1.5rem;
-}
-
-.stacks .label.total {
-  opacity: 1;
-  font-weight: 600;
-}
-
-.stacks .item {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.stacks .item b {
-  margin-top: 0.4rem;
-  font-size: 0.8rem;
-  font-weight: 400;
-  opacity: 0.8;
-}
-
-.stack {
-  display: flex;
-  flex-direction: column-reverse;
-  gap: 2px;
-  width: calc(var(--ms) * 0.72rem);
-  font-family: var(--slidev-code-font-family, monospace);
-}
-
-.stack span {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 1.5rem;
-  border-radius: 4px;
-  color: #101114;
-  font-weight: 700;
-}
-
-.fn-a {
-  background: #e8a317;
-}
-
-.fn-b {
-  background: #e4d3b0;
-}
-
-.fn-c {
-  background: #f3efe6;
-}
-</style>
 
 ---
 class: steps
